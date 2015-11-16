@@ -1,0 +1,63 @@
+[
+    {
+        "name": "s9e/text-formatter",
+        "version": "0.4.3",
+        "version_normalized": "0.4.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/s9e/TextFormatter.git",
+            "reference": "75df6ba2610bdc24f7c6821c21ffc45874897e52"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/s9e/TextFormatter/zipball/75df6ba2610bdc24f7c6821c21ffc45874897e52",
+            "reference": "75df6ba2610bdc24f7c6821c21ffc45874897e52",
+            "shasum": ""
+        },
+        "require": {
+            "ext-dom": "*",
+            "ext-filter": "*",
+            "lib-pcre": ">=7.2",
+            "php": ">=5.3.3"
+        },
+        "suggest": {
+            "ext-intl": "Allows international URLs to be accepted by the URL filter",
+            "ext-json": "Enables the generation of a JavaScript parser",
+            "ext-mbstring": "Enables some optimizations in the PHP renderer",
+            "ext-tokenizer": "Enables optimizations in the PHP renderer",
+            "ext-xsl": "Enables the XSLT renderer",
+            "ext-zlib": "Enables gzip compression when scraping content via the MediaEmbed plugin"
+        },
+        "time": "2015-10-29 17:43:46",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "s9e\\TextFormatter\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "Multi-purpose text formatting and markup library. Plugins offer support for BBCodes, Markdown, emoticons, HTML, embedding media (YouTube, etc...), enhanced typography and more.",
+        "homepage": "https://github.com/s9e/TextFormatter/",
+        "keywords": [
+            "bbcode",
+            "bbcodes",
+            "blog",
+            "censor",
+            "embed",
+            "emoji",
+            "emoticons",
+            "engine",
+            "forum",
+            "html",
+            "markdown",
+            "markup",
+            "media",
+            "parser",
+            "shortcodes"
+        ]
+    }
+]

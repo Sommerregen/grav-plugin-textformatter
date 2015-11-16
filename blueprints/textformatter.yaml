@@ -1,0 +1,29 @@
+form:
+  validation: loose
+
+  fields:
+    tabs:
+      type: tabs
+      active: 1
+
+      fields:
+        options:
+          type: tab
+
+          fields:
+            mathjax:
+              type: section
+              title: PLUGINS.TEXTFORMATTER.TEXTFORMATTER
+              underline: true
+
+              fields:
+                header.process.textformatter:
+                  type: toggle
+                  label: PLUGINS.TEXTFORMATTER.PROCESS
+                  highlight: 1
+                  default: 1
+                  options:
+                    1: PLUGIN_ADMIN.YES
+                    0: PLUGIN_ADMIN.NO
+                  validate:
+                    type: bool

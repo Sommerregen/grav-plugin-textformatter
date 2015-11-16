@@ -1,0 +1,153 @@
+# Global plugin configurations
+
+enabled: true                # Set to false to disable this plugin completely
+
+# Default options for TextFormatter configuration
+
+process: false
+
+# Global and page specific configurations
+
+autoemail: true               # Convert plain-text emails into clickable "mailto:" links
+autoimage: true               # Converts plain-text image URLs into actual images
+
+# Converts plain-text URLs into clickable links
+autolink:
+  enabled: true
+  www: false                  # Autom. link any hostname that starts with "www."
+
+  schemes:                    # Allowed schemes
+    - 'http'
+    - 'https'
+
+# Handle a very flexible flavour of the BBCode syntax.
+bbcodes:
+  enabled: true
+
+  # Add BBCodes from repository (https://github.com/s9e/TextFormatter/blob/master/src/Plugins/BBCodes/Configurator/repository.xml)
+  bbcodes: ['b', 'c', 'center', 'code', 'color', 'email', 'float', 'hr', 'i', 'img', 'list', '*', 'quote', 's', 'size', 'spoiler', 'u', 'url']
+
+  custom:
+    # <bbcode>: <template>
+
+# Censors text based on a configurable list of words
+censor:
+  enabled: true
+
+  words:
+    # <word>: <replacement>
+
+# Render standardized set of pictographs.
+emoji: ''                     # Currently support: 'twemoji', 'emojione'
+
+# Performs simple replacements, best suited for handling emoticons. Matching is case-sensitive.
+emoticons:
+  enabled: true
+
+  path: ''
+  icons:
+    # <acronym>: <filename.extension>
+
+# Defines the backslash character \ as an escape character
+escaper:
+  enabled: true
+
+  escape_all: false           # Escape any character (only suitable in some specific situations)
+
+  regex: ''                   # Escape according to regular expression
+
+fancypants: true              # Provide enhanced typography, aka "fancy Unicode symbols"
+
+# Allows HTML comments to be used, enables a whitelist of HTML elements and escapes HTML entities
+html:
+  comments: true              # Allow HTML comments to be used
+  entities: true              # Allow HTML entities to be used.
+
+  # Enables a whitelist of HTML elements to be used
+  elements:
+    enabled: true
+
+    allowed:
+      safe:                     # Allow some safe HTML
+        a: 'href, *title'
+        abbr: '*title'
+        b: ''
+        br: ''
+        code: ''
+        dd: ''
+        del: ''
+        div: '*class'
+        dl: ''
+        dt: ''
+        i: ''
+        img: 'src, *alt, *height, *title, *width'
+        ins: ''
+        li: ''
+        ol: ''
+        pre: ''
+        rb: ''
+        rp: ''
+        rt: ''
+        rtc: ''
+        ruby: ''
+        span: '*class'
+        strong: ''
+        sub: ''
+        sup: ''
+        table: ''
+        tbody: ''
+        td: '*colspan, *rowspan'
+        tfoot: ''
+        th: '*colspan, *rowspan, *scope'
+        thead: ''
+        tr: ''
+        u: ''
+        ul: ''
+
+      unsafe:                   # Allow unsafe HTML (danger!)
+
+# Serves to capture keywords in plain text and render them as a rich element
+# of your choosing such as a link, a popup or a widget.
+keywords:
+  enabled: true
+  case_sensitive: true        # Keywords are case-sensitive by default
+  template: ''                # Template to render keywords
+
+  keywords:                   # Add a couple of keywords
+
+# Allow the user to embed content from allowed sites using a [media]
+# BBCode, site-specific BBCodes such as [youtube], or from simply posting
+# a supported URL in plain text.
+mediaembed:
+  enabled: true
+
+  # Whether to create a BBCode for each site
+  create_individiual_bbcodes: true
+
+  # Add the sites you want to support
+  # see http://s9etextformatter.readthedocs.org/Plugins/MediaEmbed/Sites/
+  sites:
+    - 'dailymotion'
+    - 'facebook'
+    - 'flickr'
+    - 'imgur'
+    - 'instagram'
+    - 'slideshare'
+    - 'soundcloud'
+    - 'spotify'
+    - 'tumblr'
+    - 'twitch'
+    - 'twitter'
+    - 'vimeo'
+    - 'vine'
+    - 'youtube'
+
+# Performs generic, regexp-based replacements
+preg:
+  enabled: true
+
+  replace:
+    # <pattern>: <replacement>
+
+  match:
+    # <pattern>: <tagname>

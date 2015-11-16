@@ -1,0 +1,23 @@
+{
+    "name": "grav-plugin-textmatter",
+    "description": "This plugin is a wrapper for TextFormatter, a library that supports BBCode, HTML and other markup via plugin. Handles emoticons, censors words, automatically embeds media and more.",
+    "keywords": ["text", "formatter", "filter", "bbcode", "emoticons", "media", "embed", "plugin"],
+    "homepage": "https://github.com/sommerregen/grav-plugin-textformatter",
+    "license": "MIT/GPL",
+    "authors": [
+        {
+            "name": "Sommerregen",
+            "email": "sommerregen@benjamin-regler.de",
+            "homepage": "http://benjamin-regler.de",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/sommerregen/grav-plugin-textformatter/issues",
+        "docs": "https://github.com/sommerregen/grav-plugin-textformatter/blob/master/README.md"
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "s9e/text-formatter": "*"
+    }
+}
