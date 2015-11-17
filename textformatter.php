@@ -128,15 +128,15 @@ class TextFormatterPlugin extends Plugin
 
       // Build an anonymous function to pass to `parseLinks()`
       $function = function ($matches) use (&$page, &$config) {
-        $content = $matches[0];
+        $content = $matches[1];
         return $this->textFormatterFilter($content, $config->toArray(), $page);
       };
 
       if ($process) {
-        $raw = $function([
+        $raw = $function(['',
           // Parse links (strip markup from content)
           $this->parseLinks($raw, function($matches) {
-            return $matches[0];
+            return $matches[1];
           })
         ]);
       } else {
