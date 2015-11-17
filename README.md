@@ -228,9 +228,9 @@ in your page header.
 
 ### Known issues
 
-The [Parsedown libary](https://github.com/erusev/parsedown-extra) used by Grav to parse Markdown doesn't handle HTML elements very well. In some cases when block elements are on one line, all content below will be ignored (see the issue [#44](https://github.com/erusev/parsedown-extra/issues/44) for some details). However only ´Parsedown Extra´ is affected. Rendering content in regular Parsedown is fine.
+The [Parsedown libary](https://github.com/erusev/parsedown-extra) used by Grav to parse Markdown doesn't handle HTML elements very well. In some cases when block elements are on one line, all content below will be ignored (see the issue [#44](https://github.com/erusev/parsedown-extra/issues/44) for some details). However only `Parsedown Extra` is affected. Rendering content in regular `Parsedown` is fine.
 
-If you experience such an issues, it is recommended to disable ´Parsedown Extra´ in the page header via
+If you experience such an issues, it is recommended to disable `Parsedown Extra` in the page header via
 
 ```yaml
 markdown:
