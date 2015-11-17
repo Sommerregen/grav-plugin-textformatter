@@ -1,6 +1,6 @@
 <?php
 /**
- * TextFormatter v1.0.0
+ * TextFormatter v1.0.1
  *
  * This plugin is a wrapper for TextFormatter, a library that supports
  * BBCode, HTML and other markup via plugin. Handles emoticons, censors
@@ -10,7 +10,7 @@
  * http://benjamin-regler.de/license/
  *
  * @package     TextFormatter
- * @version     1.0.0
+ * @version     1.0.1
  * @link        <https://github.com/sommerregen/grav-plugin-textformatter>
  * @author      Benjamin Regler <sommerregen@benjamin-regler.de>
  * @copyright   2015, Benjamin Regler
@@ -128,15 +128,15 @@ class TextFormatterPlugin extends Plugin
 
       // Build an anonymous function to pass to `parseLinks()`
       $function = function ($matches) use (&$page, &$config) {
-        $content = $matches[0];
+        $content = $matches[1];
         return $this->textFormatterFilter($content, $config->toArray(), $page);
       };
 
       if ($process) {
-        $raw = $function([
+        $raw = $function(['',
           // Parse links (strip markup from content)
           $this->parseLinks($raw, function($matches) {
-            return $matches[0];
+            return $matches[1];
           })
         ]);
       } else {

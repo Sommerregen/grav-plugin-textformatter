@@ -11,7 +11,7 @@ form:
           type: tab
 
           fields:
-            mathjax:
+            textformatter:
               type: section
               title: PLUGINS.TEXTFORMATTER.TEXTFORMATTER
               underline: true
