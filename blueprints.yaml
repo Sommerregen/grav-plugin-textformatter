@@ -1,5 +1,5 @@
 name: Text Formatter
-version: 1.0.1
+version: 1.0.2
 description: "This plugin is a wrapper for [TextFormatter](https://github.com/s9e/TextFormatter), a library that supports BBCode, HTML and other markup via plugin. It handles emoticons, censors words, automatically embeds media and more."
 icon: sticky-note
 author:
