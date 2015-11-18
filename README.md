@@ -250,7 +250,7 @@ and use Twig instead, if necessary.
 You can pass arguments to the plugin filter, namely the same arguments as available in the [textformatter.yaml](textformatter.yaml) file. For example
 
 ```
-{{ page.content|textformatter({'bbcodes': false}) }}
+{{ page.content|textformatter({'bbcodes': {'enabled' : false}}) }}
 ```
 
 will disable the support for BBCodes.
