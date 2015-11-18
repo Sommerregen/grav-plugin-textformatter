@@ -1,6 +1,6 @@
 <?php
 /**
- * TextFormatter v1.0.1
+ * TextFormatter v1.0.2
  *
  * This plugin is a wrapper for TextFormatter, a library that supports
  * BBCode, HTML and other markup via plugin. Handles emoticons, censors
@@ -10,7 +10,7 @@
  * http://benjamin-regler.de/license/
  *
  * @package     TextFormatter
- * @version     1.0.1
+ * @version     1.0.2
  * @link        <https://github.com/sommerregen/grav-plugin-textformatter>
  * @author      Benjamin Regler <sommerregen@benjamin-regler.de>
  * @copyright   2015, Benjamin Regler
