@@ -2,7 +2,7 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Configurator\JavaScript;
@@ -17,7 +17,7 @@ class StylesheetCompressor
 		'<param name="allowfullscreen" value="true"/>',
 		'<xsl:value-of select="',
 		'<xsl:copy-of select="@',
-		'position:relative;padding-bottom:',
+		'overflow:hidden;position:relative;padding-bottom:',
 		'display:inline-block;width:100%;max-width:',
 		' [-:\\w]++="',
 		'(?<=<)[-:\\w]++',

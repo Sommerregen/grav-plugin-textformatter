@@ -2,7 +2,7 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Configurator\Bundles;
@@ -24,6 +24,7 @@ class Forum extends Bundle
 		$configurator->BBCodes->addFromRepository('LIST');
 		$configurator->BBCodes->addFromRepository('*');
 		$configurator->BBCodes->add('LI');
+		$configurator->BBCodes->addFromRepository('OL');
 		$configurator->BBCodes->addFromRepository('QUOTE', 'default', array(
 			'authorStr' => '<xsl:value-of select="@author"/> <xsl:value-of select="$L_WROTE"/>'
 		));
@@ -35,6 +36,7 @@ class Forum extends Bundle
 			'spoilerStr' => '{L_SPOILER}',
 		));
 		$configurator->BBCodes->addFromRepository('U');
+		$configurator->BBCodes->addFromRepository('UL');
 		$configurator->BBCodes->addFromRepository('URL');
 		$configurator->rendering->parameters = array(
 			'L_WROTE'   => 'wrote:',

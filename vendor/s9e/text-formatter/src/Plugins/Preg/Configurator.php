@@ -2,7 +2,7 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Plugins\Preg;
@@ -37,6 +37,20 @@ class Configurator extends ConfiguratorBase
 			$pregs[]  = array($tagName, new Regexp($regexp, \true), $passthroughIdx, $captures);
 		}
 		return array('generics' => $pregs);
+	}
+	public function getJSHints()
+	{
+		$hasPassthrough = \false;
+		foreach ($this->collection as $_ca164be8)
+		{
+			list($tagName, $regexp, $passthroughIdx) = $_ca164be8;
+			if ($passthroughIdx)
+			{
+				$hasPassthrough = \true;
+				break;
+			}
+		}
+		return array('PREG_HAS_PASSTHROUGH' => $hasPassthrough);
 	}
 	public function match($regexp, $tagName)
 	{

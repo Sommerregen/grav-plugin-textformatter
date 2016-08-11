@@ -2,7 +2,7 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Plugins\Autolink;
@@ -11,7 +11,7 @@ use s9e\TextFormatter\Plugins\ConfiguratorBase;
 class Configurator extends ConfiguratorBase
 {
 	protected $attrName = 'url';
-	protected $matchWww = \false;
+	public $matchWww = \false;
 	protected $tagName = 'URL';
 	protected function setUp()
 	{
@@ -26,10 +26,10 @@ class Configurator extends ConfiguratorBase
 	{
 		$anchor = RegexpBuilder::fromList($this->configurator->urlConfig->getAllowedSchemes()) . '://';
 		if ($this->matchWww)
-			$anchor = '(?:' . $anchor . '|www\.)';
+			$anchor = '(?:' . $anchor . '|www\\.)';
 		$config = array(
 			'attrName'   => $this->attrName,
-			'regexp'     => '#' . $anchor . '\\S(?>[^\\s\\[\\]]*(?>\\[\\w*\\])?)++#iS',
+			'regexp'     => '#\\b' . $anchor . '\\S(?>[^\\s\\[\\]]*(?>\\[\\w*\\])?)++#iS',
 			'tagName'    => $this->tagName
 		);
 		if (!$this->matchWww)

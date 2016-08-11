@@ -2,7 +2,7 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Plugins\HTMLElements;
@@ -11,7 +11,6 @@ use RuntimeException;
 use s9e\TextFormatter\Configurator\Helpers\RegexpBuilder;
 use s9e\TextFormatter\Configurator\Items\Tag;
 use s9e\TextFormatter\Configurator\Items\UnsafeTemplate;
-use s9e\TextFormatter\Configurator\Items\Variant;
 use s9e\TextFormatter\Configurator\JavaScript\Dictionary;
 use s9e\TextFormatter\Configurator\Validators\AttributeName;
 use s9e\TextFormatter\Configurator\Validators\TagName;
@@ -26,7 +25,6 @@ class Configurator extends ConfiguratorBase
 		'formaction' => '#url',
 		'href'       => '#url',
 		'icon'       => '#url',
-		'itemtype'   => '#url',
 		'manifest'   => '#url',
 		'poster'     => '#url',
 		'src'        => '#url'
@@ -159,5 +157,9 @@ class Configurator extends ConfiguratorBase
 				$config['aliases'][$elName] = new Dictionary($aliases);
 		}
 		return $config;
+	}
+	public function getJSHints()
+	{
+		return array('HTMLELEMENTS_HAS_ALIASES' => (int) !empty($this->aliases));
 	}
 }

@@ -2,7 +2,7 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Plugins\Autolink;
@@ -11,14 +11,8 @@ class Parser extends ParserBase
 {
 	public function parse($text, array $matches)
 	{
-		$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		foreach ($matches as $m)
-		{
-			$matchPos = $m[0][1];
-			if ($matchPos > 0 && \strpos($chars, $text[$matchPos - 1]) !== \false)
-				continue;
-			$this->linkifyUrl($matchPos, $this->trimUrl($m[0][0]));
-		}
+			$this->linkifyUrl($m[0][1], $this->trimUrl($m[0][0]));
 	}
 	protected function linkifyUrl($tagPos, $url)
 	{
@@ -36,7 +30,7 @@ class Parser extends ParserBase
 	{
 		while (1)
 		{
-			$url = \preg_replace('#(?![-=/)])[>\\pP]+$#Du', '', $url);
+			$url = \preg_replace('#(?![-=/)])[\\s!-.:-@[-`{-~\\pP]+$#Du', '', $url);
 			if (\substr($url, -1) === ')' && \substr_count($url, '(') < \substr_count($url, ')'))
 			{
 				$url = \substr($url, 0, -1);

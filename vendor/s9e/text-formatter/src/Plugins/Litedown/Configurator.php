@@ -2,13 +2,14 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Plugins\Litedown;
 use s9e\TextFormatter\Plugins\ConfiguratorBase;
 class Configurator extends ConfiguratorBase
 {
+	public $decodeHtmlEntities = \false;
 	protected $tags = array(
 		'C'      => '<code><xsl:apply-templates /></code>',
 		'CODE'   => array(
@@ -20,7 +21,13 @@ class Configurator extends ConfiguratorBase
 			),
 			'template' =>
 				'<pre>
-					<code class="{@lang}">
+					<code>
+						<xsl:if test="@lang">
+							<xsl:attribute name="class">
+								<xsl:text>language-</xsl:text>
+								<xsl:value-of select="@lang"/>
+							</xsl:attribute>
+						</xsl:if>
 						<xsl:apply-templates />
 					</code>
 				</pre>'
@@ -45,6 +52,10 @@ class Configurator extends ConfiguratorBase
 		'LI'     => '<li><xsl:apply-templates/></li>',
 		'LIST'   => array(
 			'attributes' => array(
+				'start' => array(
+					'filterChain' => array('#uint'),
+					'required'    => \false
+				),
 				'type' => array(
 					'filterChain' => array('#simpletext'),
 					'required'    => \false
@@ -56,7 +67,7 @@ class Configurator extends ConfiguratorBase
 						<ul><xsl:apply-templates/></ul>
 					</xsl:when>
 					<xsl:otherwise>
-						<ol><xsl:apply-templates/></ol>
+						<ol><xsl:copy-of select="@start"/><xsl:apply-templates/></ol>
 					</xsl:otherwise>
 				</xsl:choose>'
 		),
@@ -101,6 +112,10 @@ class Configurator extends ConfiguratorBase
 	}
 	public function asConfig()
 	{
-		return array();
+		return array('decodeHtmlEntities' => (bool) $this->decodeHtmlEntities);
+	}
+	public function getJSHints()
+	{
+		return array('LITEDOWN_DECODE_HTML_ENTITIES' => (int) $this->decodeHtmlEntities);
 	}
 }

@@ -2,7 +2,7 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter;
@@ -268,7 +268,8 @@ class Parser
 				'parser'         => $this,
 				'registeredVars' => $this->registeredVars,
 				'tag'            => $tag,
-				'tagConfig'      => $tagConfig
+				'tagConfig'      => $tagConfig,
+				'text'           => $this->text
 			);
 			foreach ($tagConfig['filterChain'] as $filter)
 				if (!self::executeFilter($filter, $vars))
@@ -334,7 +335,7 @@ class Parser
 			$attributes = $tag->getAttributes();
 			\ksort($attributes);
 			foreach ($attributes as $attrName => $attrValue)
-				$this->output .= ' ' . $attrName . '="' . \htmlspecialchars($attrValue, \ENT_COMPAT, 'UTF-8') . '"';
+				$this->output .= ' ' . $attrName . '="' . \str_replace("\n", '&#10;', \htmlspecialchars($attrValue, \ENT_COMPAT, 'UTF-8')) . '"';
 			if ($tag->isSelfClosingTag())
 				if ($tagLen)
 					$this->output .= '>' . $tagText . '</' . $tagName . '>';
@@ -605,6 +606,17 @@ class Parser
 		}
 		return \false;
 	}
+	protected function createChild(Tag $tag)
+	{
+		$tagConfig = $this->tagsConfig[$tag->getName()];
+		if (isset($tagConfig['rules']['createChild']))
+		{
+			$priority = -1000;
+			$tagPos   = $this->pos + \strspn($this->text, " \n\r\t", $this->pos);
+			foreach ($tagConfig['rules']['createChild'] as $tagName)
+				$this->addStartTag($tagName, $tagPos, 0)->setSortPriority(++$priority);
+		}
+	}
 	protected function fosterParent(Tag $tag)
 	{
 		if (!empty($this->openTags))
@@ -621,10 +633,11 @@ class Parser
 					{
 						$child = $this->addCopyTag($parent, $tag->getPos() + $tag->getLen(), 0);
 						$tag->cascadeInvalidationTo($child);
+						$child->setSortPriority($tag->getSortPriority() + 1);
 					}
-					++$this->currentFixingCost;
 					$this->tagStack[] = $tag;
-					$this->addMagicEndTag($parent, $tag->getPos());
+					$this->addMagicEndTag($parent, $tag->getPos())->setSortPriority($tag->getSortPriority() - 1);
+					$this->currentFixingCost += \count($this->tagStack);
 					return \true;
 				}
 			}
@@ -653,7 +666,9 @@ class Parser
 		$tagName = $startTag->getName();
 		if ($startTag->getFlags() & self::RULE_IGNORE_WHITESPACE)
 			$tagPos = $this->getMagicPos($tagPos);
-		$this->addEndTag($tagName, $tagPos, 0)->pairWith($startTag);
+		$endTag = $this->addEndTag($tagName, $tagPos, 0);
+		$endTag->pairWith($startTag);
+		return $endTag;
 	}
 	protected function getMagicPos($tagPos)
 	{
@@ -806,6 +821,7 @@ class Parser
 			$this->addIgnoreTag($tag->getPos() + $tag->getLen(), 1);
 		$this->outputTag($tag);
 		$this->pushContext($tag);
+		$this->createChild($tag);
 	}
 	protected function processEndTag(Tag $tag)
 	{
@@ -938,7 +954,7 @@ class Parser
 	}
 	public function addIgnoreTag($pos, $len)
 	{
-		return $this->addTag(Tag::SELF_CLOSING_TAG, 'i', $pos, $len);
+		return $this->addTag(Tag::SELF_CLOSING_TAG, 'i', $pos, \min($len, $this->textLen - $pos));
 	}
 	public function addParagraphBreak($pos)
 	{

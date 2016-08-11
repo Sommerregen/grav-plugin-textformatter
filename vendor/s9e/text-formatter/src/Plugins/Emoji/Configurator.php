@@ -2,14 +2,13 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Plugins\Emoji;
 use s9e\TextFormatter\Configurator\Helpers\ConfigHelper;
 use s9e\TextFormatter\Configurator\Helpers\RegexpBuilder;
 use s9e\TextFormatter\Configurator\Items\Regexp;
-use s9e\TextFormatter\Configurator\Items\Variant;
 use s9e\TextFormatter\Plugins\ConfiguratorBase;
 class Configurator extends ConfiguratorBase
 {
@@ -95,11 +94,19 @@ class Configurator extends ConfiguratorBase
 		}
 		return $config;
 	}
+	public function getJSHints()
+	{
+		$quickMatch = ConfigHelper::generateQuickMatchFromList(\array_keys($this->aliases));
+		return array(
+			'EMOJI_HAS_ALIASES'          => !empty($this->aliases),
+			'EMOJI_HAS_ALIAS_QUICKMATCH' => ($quickMatch !== \false)
+		);
+	}
 	protected function getEmojiOneSrc()
 	{
 		$src  = '//cdn.jsdelivr.net/emojione/assets/' . $this->imageType . '/';
 		$src .= "<xsl:if test=\"contains(@seq, '-20e3') or @seq = 'a9' or @seq = 'ae'\">00</xsl:if>";
-		$src .= "<xsl:value-of select=\"translate(@seq, 'abcdef', 'ABCDEF')\"/>";
+		$src .= '<xsl:value-of select="@seq"/>';
 		$src .= '.' . $this->imageType;
 		return $src;
 	}
