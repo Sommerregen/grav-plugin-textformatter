@@ -101,8 +101,8 @@ class TextFormatter
 
         // Set parameters
         $renderer->setParameters([
-          // Path to the emoticons
-          'EMOTICONS_PATH' => $emoticons
+            // Path to the emoticons
+            'EMOTICONS_PATH' => $emoticons
         ]);
 
         // Transform XML into HTML

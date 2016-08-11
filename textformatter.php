@@ -57,21 +57,19 @@ class TextFormatterPlugin extends Plugin
      */
     public function onPluginsInitialized()
     {
-        if ($this->config->get('plugins.textformatter.enabled')) {
+       $events = [
+            'onPageContentRaw' => ['onPageContentRaw', 0],
+            'onTwigInitialized' => ['onTwigInitialized', 0]
+        ];
+
+        if ($this->isAdmin()) {
+            $this->active = false;
             $events = [
-                'onPageContentRaw' => ['onPageContentRaw', 0],
-                'onTwigInitialized' => ['onTwigInitialized', 0]
+                'onBlueprintCreated' => ['onBlueprintCreated', 0]
             ];
-
-            if ($this->isAdmin()) {
-                $this->active = false;
-                $events = [
-                    'onBlueprintCreated' => ['onBlueprintCreated', 0]
-                ];
-            }
-
-            $this->enable($events);
         }
+
+        $this->enable($events);
     }
 
     /**
@@ -84,8 +82,8 @@ class TextFormatterPlugin extends Plugin
         /** @var Blueprints $blueprint */
         $blueprint = $event['blueprint'];
 
-        if ($blueprint->get('form.fields.tabs')) {
-            $blueprints = new Blueprints(__DIR__ . '/blueprints/');
+        if ($blueprint->get('form/fields/tabs')) {
+            $blueprints = new Blueprints(__DIR__ . '/blueprints');
             $extends = $blueprints->get($this->name);
             $blueprint->extend($extends, true);
         }
