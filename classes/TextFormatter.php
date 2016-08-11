@@ -134,7 +134,7 @@ class TextFormatter
   protected function setupAutoimage($options)
   {
     if ($options) {
-      $this->textformatter->plugins->load('Autoemail');
+      $this->textformatter->plugins->load('Autoimage');
     }
   }
 
