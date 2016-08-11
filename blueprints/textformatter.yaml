@@ -20,8 +20,9 @@ form:
                 header.process.textformatter:
                   type: toggle
                   label: PLUGINS.TEXTFORMATTER.PROCESS
+                  toggleable: true
                   highlight: 1
-                  '@config-default': plugins.textformatter.process
+                  # '@config-default': plugins.textformatter.process
                   options:
                     1: PLUGIN_ADMIN.YES
                     0: PLUGIN_ADMIN.NO

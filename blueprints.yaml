@@ -297,6 +297,17 @@ form:
           text: PLUGINS.TEXTFORMATTER.HTML.SECTION_HELP
 
           fields:
+            html.enabled:
+              type: toggle
+              label: PLUGINS.TEXTFORMATTER.STATUS
+              highlight: 1
+              default: 1
+              options:
+                1: PLUGIN_ADMIN.ENABLED
+                0: PLUGIN_ADMIN.DISABLED
+              validate:
+                type: bool
+
             html.comments:
               type: toggle
               label: PLUGINS.TEXTFORMATTER.HTML.COMMENTS

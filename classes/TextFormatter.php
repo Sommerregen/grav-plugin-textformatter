@@ -293,6 +293,10 @@ class TextFormatter
    */
   protected function setupHtml($options)
   {
+    if ($options['enabled']) {
+      return;
+    }
+
     // HTMLComments
     if ($options['comments']) {
       $this->textformatter->plugins->load('HTMLComments');
