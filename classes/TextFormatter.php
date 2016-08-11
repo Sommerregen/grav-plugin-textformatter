@@ -10,7 +10,7 @@
 
 namespace Grav\Plugin;
 
-use Grav\Common\GravTrait;
+use Grav\Common\Grav;
 use Grav\Common\Filesystem\Folder;
 use s9e\TextFormatter\Configurator;
 
@@ -24,9 +24,11 @@ use s9e\TextFormatter\Configurator;
 class TextFormatter
 {
   /**
-   * @var TextFormatter
+   * Grav instance
+   *
+   * @var \Grav\Common\Grav
    */
-  use GravTrait;
+  protected $grav;
 
   /**
    * Current instance of the TextFormatter
@@ -49,6 +51,8 @@ class TextFormatter
    */
   public function init($options = [])
   {
+    $this->grav = Grav::instance()
+
     $this->textformatter = new Configurator();
     $this->options = $options;
 
@@ -88,10 +92,10 @@ class TextFormatter
     // Resolve emoticons path (return something even if path does not exists)
     if ($emoticons = (string) $options->get('emoticons.path', '')) {
       /** @var UniformResourceLocator $locator */
-      $locator = self::getGrav()['locator'];
+      $locator = $this->grav['locator'];
 
       /** @var Uri $uri */
-      $uri = self::getGrav()['uri'];
+      $uri = $this->grav['uri'];
 
       // Get relative path to the resource (or false if not found).
       $resource = strpos($emoticons, '://') ? $locator->findResource($emoticons, false) : $emoticons;
