@@ -100,6 +100,8 @@ fancypants: true              # Provide enhanced typography, aka "fancy Unicode 
 
 # Allows HTML comments to be used, enables a whitelist of HTML elements and escapes HTML entities
 html:
+  enabled: true
+
   comments: true              # Allow HTML comments to be used
   entities: true              # Allow HTML entities to be used.
 

@@ -1,15 +1,8 @@
 form:
-  validation: loose
-
   fields:
     tabs:
-      type: tabs
-      active: 1
-
       fields:
         options:
-          type: tab
-
           fields:
             textformatter:
               type: section
