@@ -263,7 +263,7 @@ en:
 
       HTML:
         SECTION: "HTML"
-        HELP: "<span style='color: #df1f1f;'>NOTE: This option globally toggles all filters from below on or off.</span>"
+        HELP: "<span style='color: #df1f1f;'>NOTE: This option affects the status of all filters listed below.</span>"
         DESCRIPTION: "Handles how HTML is rendered."
 
         SECTION: "HTML Comments & Entities"
