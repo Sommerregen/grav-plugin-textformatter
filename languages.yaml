@@ -7,8 +7,10 @@ de:
       SMILEYS: "Smileys"
 
       TEXTFORMATTER: "Text Formatter"
-      PROCESS: "TextFormatter anwenden"
       STATUS: "Status"
+
+      ACTIVE: 'Aktiv'
+      ACTIVE_HELP: 'Option zum seitenspezifischen (De-)Aktivieren des Plugins.'
 
       AUTOEMAIL:
         SECTION: "Auto E-Mail"
@@ -175,8 +177,10 @@ en:
       SMILEYS: "Smileys"
 
       TEXTFORMATTER: "Text Formatter"
-      PROCESS: "Process"
       STATUS: "Status"
+
+      ACTIVE: 'Active'
+      ACTIVE_HELP: 'Enable or disable this plugin on a page.'
 
       AUTOEMAIL:
         SECTION: "Autoemail"

@@ -40,11 +40,8 @@ The `TextFormatter` plugin comes with some sensible default configuration, that 
 ```yaml
 # Global plugin configurations
 
-enabled: true                # Set to false to disable this plugin completely
-
-# Default options for TextFormatter configuration
-
-process: false
+enabled: true                 # Set to false to disable this plugin completely
+active: true                  # Enable or disable this plugin for a page
 
 # Global and page specific configurations
 

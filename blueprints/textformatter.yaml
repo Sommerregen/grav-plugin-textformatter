@@ -10,12 +10,13 @@ form:
               underline: true
 
               fields:
-                header.process.textformatter:
+                header.textformatter:
                   type: toggle
-                  label: PLUGINS.TEXTFORMATTER.PROCESS
+                  label: PLUGINS.TEXTFORMATTER.ACTIVE
+                  help: PLUGINS.TEXTFORMATTER.ACTIVE_HELP
                   toggleable: true
                   highlight: 1
-                  # '@config-default': plugins.textformatter.process
+                  # '@config-default': plugins.textformatter.active
                   options:
                     1: PLUGIN_ADMIN.YES
                     0: PLUGIN_ADMIN.NO

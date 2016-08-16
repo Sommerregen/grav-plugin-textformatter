@@ -108,9 +108,9 @@ class TextFormatterPlugin extends Plugin
 
         // Process contents with TextFormatter(?)
         if (isset($header->process['textformatter'])) {
-            $process = (bool) $header->process['textformatter'];
+            $enabled = (bool) $header->process['textformatter'];
         } else {
-            $process = $config->get('process', false);
+            $enabled = ($config->get('enabled') && $config->get('active')) ? true : false;
         }
 
         // Process contents
@@ -123,7 +123,7 @@ class TextFormatterPlugin extends Plugin
                 return $this->textFormatterFilter($content, $config->toArray(), $page);
             };
 
-            if ($process) {
+            if ($enabled) {
                 $raw = $function(['',
                     // Parse links (strip markup from content)
                     $this->parseLinks($raw, function($matches) {

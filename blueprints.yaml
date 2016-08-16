@@ -37,9 +37,10 @@ form:
               validate:
                 type: bool
 
-            process:
+            active:
               type: toggle
-              label: PLUGINS.TEXTFORMATTER.PROCESS
+              label: PLUGINS.TEXTFORMATTER.ACTIVE
+              help: PLUGINS.TEXTFORMATTER.ACTIVE_HELP
               highlight: 1
               default: 1
               options:
