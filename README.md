@@ -19,7 +19,7 @@
 
 `TextFormatter` is a high-quality plugin for [GetGrav.org](http://getgrav.org) extending it's page processing options by using the [TextFormatter](https://github.com/s9e/TextFormatter) library. It supports BBCode, Markdown, HTML and other markup via plugins. The library is in PHP, with a JavaScript port also available for client-side preview. It comes with a [thorough documentation](http://s9etextformatter.readthedocs.org/) and has a rich feature set already natively supported. This plugin exposes almost all options of them and gives you the full control over the configurations in the admin panel or in the page header.
 
-If you are interested in in seeing this plugin in action you can [tryout a demonstration](http://s9e.github.io/TextFormatter/demo.html). Here is a screenshot on a live system:
+If you are interested in it seeing this plugin in action you can [tryout a demonstration](http://s9e.github.io/TextFormatter/demo.html). Here is a screenshot on a live system:
 
 ![Screenshot TextFormatter Plugin](assets/screenshot.png "TextFormatter Preview")
 
@@ -192,7 +192,7 @@ preg:
     # <pattern>: <tagname>
 ```
 
-If you need to change any value, then the best process is to copy the [textformatter.yaml](textformatter.yaml) file into your `users/config/plugins/` folder (create it if it doesn't exist), and then modify there. This will override the default settings.
+If you need to change any value, then the best process is to copy the [textformatter.yaml](textformatter.yaml) file into your `users/config/plugins/` folder (create if doesn't exist), and modify it there. This will override the default settings.
 
 If you want to alter the settings for one or a few pages only, you can do so by adding page specific configurations into your page headers, e.g.
 
@@ -229,7 +229,7 @@ in your page header.
 
 The [Parsedown libary](https://github.com/erusev/parsedown-extra) used by Grav to parse Markdown doesn't handle HTML elements very well. In some cases when block elements are on one line, all content below will be ignored (see the issue [#44](https://github.com/erusev/parsedown-extra/issues/44) for some details). However only `Parsedown Extra` is affected. Rendering content in regular `Parsedown` is fine.
 
-If you experience such an issues, it is recommended to disable `Parsedown Extra` in the page header via
+If you experience such an issue, it is recommended to disable `Parsedown Extra` in the page header via
 
 ```yaml
 markdown:
@@ -272,7 +272,7 @@ Thanks!
 
 ## License
 
-Copyright (c) 2015 [Benjamin Regler][github]. See also the list of [contributors] who participated in this project.
+Copyright (c) 2016 [Benjamin Regler][github]. See also the list of [contributors] who participated in this project.
 
 [Dual-licensed](LICENSE) for use under the terms of the [MIT][mit-license] or [GPLv3][gpl-license] licenses.
 
