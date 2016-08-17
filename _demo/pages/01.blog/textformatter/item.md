@@ -1,12 +1,14 @@
 ---
 title: 'TextFormatter Test'
 
-process:
-  textformatter: true
-
 taxonomy:
   category:
     - blog
+
+markdown:
+  extra: false
+
+textformatter: true
 ---
 
 [youtube]http://www.youtube.com/watch?v=QH2-TGUlwu4[/youtube]
