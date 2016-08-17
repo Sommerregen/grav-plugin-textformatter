@@ -13,13 +13,15 @@
  * @version     1.0.2
  * @link        <https://github.com/sommerregen/grav-plugin-textformatter>
  * @author      Benjamin Regler <sommerregen@benjamin-regler.de>
- * @copyright   2015, Benjamin Regler
+ * @copyright   2016, Benjamin Regler
  * @license     <http://opensource.org/licenses/MIT>        MIT
  * @license     <http://opensource.org/licenses/GPL-3.0>    GPLv3
  */
 
 namespace Grav\Plugin;
 
+use Grav\Common\Grav;
+use Grav\Common\Utils;
 use Grav\Common\Plugin;
 use Grav\Common\Page\Page;
 use Grav\Common\Data\Blueprints;
@@ -108,9 +110,12 @@ class TextFormatterPlugin extends Plugin
 
         // Process contents with TextFormatter(?)
         if (isset($header->process['textformatter'])) {
-            $enabled = (bool) $header->process['textformatter'];
+            $process = (bool) $header->process['textformatter'];
         } else {
-            $enabled = ($config->get('enabled') && $config->get('active')) ? true : false;
+            $process = ($config->get('active') ? true : false);
+            if (isset($header->textformatter) && is_bool($header->textformatter)) {
+                $process = (bool) $header->textformatter;
+            }
         }
 
         // Process contents
@@ -123,7 +128,8 @@ class TextFormatterPlugin extends Plugin
                 return $this->textFormatterFilter($content, $config->toArray(), $page);
             };
 
-            if ($enabled) {
+            // Only process whole page, if plugin is really active
+            if ($process) {
                 $raw = $function(['',
                     // Parse links (strip markup from content)
                     $this->parseLinks($raw, function($matches) {
@@ -166,6 +172,49 @@ class TextFormatterPlugin extends Plugin
 
         // Render
         return $this->init()->render($content, $config, $page);
+    }
+
+    /**
+     * Get emoticons.
+     *
+     * @return array Return an associative list with available emotions.
+     */
+    static public function getEmoticons()
+    {
+        /** @var UniformResourceLocator $locator */
+        $locator = Grav::instance()['locator'];
+
+        // Resolve path of default emoticons path
+        $path = Grav::instance()['config']->get('plugins.textformatter.emoticons.path');
+
+        // Check path configuration (backward-compatibility)
+        $path = $path ?: 'user://assets/emoticons';
+        $path = $locator->findResource($path, true);
+        if (!$path || !is_dir($path)) {
+            return [];
+        }
+
+        $emoticons = [];
+        $prefix = strlen($path) + 1;
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::SELF_FIRST,
+            \RecursiveIteratorIterator::CATCH_GET_CHILD // Ignore "Permission denied"
+        );
+        foreach ($iterator as $object) {
+            if ($object->isFile()) {
+                $ext = pathinfo($object->getFilename(), PATHINFO_EXTENSION);
+                $mime = Utils::getMimeType($ext);
+
+                if (Utils::startsWith($mime, 'image/')) {
+                    $marker = sprintf(':%s:', $object->getBasename($ext));
+                    $emoticons[$marker] = substr($object->getPathname(), $prefix);
+                }
+            }
+        }
+
+        uksort($emoticons, 'strnatcasecmp');
+        return $emoticons;
     }
 
     /**

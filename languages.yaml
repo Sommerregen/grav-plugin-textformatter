@@ -84,6 +84,8 @@ de:
 
         LABEL: "Emoticons"
         HELP: "Liste von Emoticons"
+        DESCRIPTION: "Weitere Informationen siehe <a href='http://s9etextformatter.readthedocs.io/Plugins/Emoticons/Synopsis/' title='TextFormatter Dokumentation'>Dokumentation</a>."
+
         PLACEHOLDER_KEY: "<emoticon>"
         PLACEHOLDER_VALUE: "<Dateiname.Erweiterung>"
 
@@ -254,6 +256,8 @@ en:
 
         LABEL: "Emoticons"
         HELP: "List of emoticons"
+        DESCRIPTION: "See the <a href='http://s9etextformatter.readthedocs.io/Plugins/Emoticons/Synopsis/' title='TextFormatter documentation'>documentation</a> for more information."
+
         PLACEHOLDER_KEY: "<emoticon>"
         PLACEHOLDER_VALUE: "<filename.ext>"
 

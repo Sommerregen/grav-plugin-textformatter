@@ -48,7 +48,7 @@ class TextFormatter
      */
     public function init($options = [])
     {
-        $this->grav = Grav::instance()
+        $this->grav = Grav::instance();
 
         $this->textformatter = new Configurator();
         $this->options = $options;
@@ -87,21 +87,23 @@ class TextFormatter
         $xml = $parser->parse($content);
 
         // Resolve emoticons path (return something even if path does not exists)
-        if ($emoticons = (string) $options->get('emoticons.path', '')) {
-            /** @var UniformResourceLocator $locator */
-            $locator = $this->grav['locator'];
+        $emoticons = $options->get('emoticons.path');
+        $emoticons = $emoticons ?: 'user://assets/emoticons';
 
-            /** @var Uri $uri */
-            $uri = $this->grav['uri'];
+        /** @var UniformResourceLocator $locator */
+        $locator = $this->grav['locator'];
 
-            // Get relative path to the resource (or false if not found).
-            $resource = strpos($emoticons, '://') ? $locator->findResource($emoticons, false) : $emoticons;
-            $emoticons = $resource ? rtrim($uri->rootUrl(), '/') . '/' . $resource : '';
-        }
+        /** @var Uri $uri */
+        $uri = $this->grav['uri'];
+
+        // Get relative path to the resource (or false if not found).
+        $resource = strpos($emoticons, '://') ? $locator->findResource($emoticons, false) : $emoticons;
+
+        $emoticons = $resource ? rtrim($uri->rootUrl(), '/') . '/' . $resource : '';
 
         // Set parameters
         $renderer->setParameters([
-            // Path to the emoticons
+            // Path to emoticons
             'EMOTICONS_PATH' => $emoticons
         ]);
 
@@ -172,7 +174,7 @@ class TextFormatter
             foreach ((array) $options['bbcodes'] as $key => $bbcode) {
                 $bbcode = strtoupper($bbcode);
                 // Unset duplicate tags, see https://github.com/s9e/TextFormatter/issues/11
-                if (in_array($bbcode, ['EMAIL', 'URL'])) {
+                if (in_array($bbcode, ['EMAIL', 'URL', 'IMG'])) {
                     unset($this->textformatter->tags[$bbcode]);
                 }
 
@@ -196,7 +198,7 @@ class TextFormatter
     {
         if ($options['enabled']) {
             foreach ((array) $options['words'] as $word => $replacement) {
-                $replacement = !empty($replacement) ? $replacement : null;
+                $replacement = $replacement ?: null;
                 $this->textformatter->Censor->add($word, $replacement);
             }
         }
@@ -295,7 +297,7 @@ class TextFormatter
      */
     protected function setupHtml($options)
     {
-        if ($options['enabled']) {
+        if (!$options['enabled']) {
             return;
         }
 

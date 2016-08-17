@@ -492,6 +492,7 @@ form:
                   type: text
                   label: PLUGINS.TEXTFORMATTER.EMOTICONS.PATH
                   help: PLUGINS.TEXTFORMATTER.EMOTICONS.PATH_HELP
+                  placeholder: "user://assets/emoticons"
                   validate:
                     type: string
 
@@ -499,7 +500,9 @@ form:
                   type: array
                   label: PLUGINS.TEXTFORMATTER.EMOTICONS.LABEL
                   help: PLUGINS.TEXTFORMATTER.EMOTICONS.HELP
+                  description: PLUGINS.TEXTFORMATTER.EMOTICONS.DESCRIPTION
                   placeholder_key: PLUGINS.TEXTFORMATTER.EMOTICONS.PLACEHOLDER_KEY
                   placeholder_value: PLUGINS.TEXTFORMATTER.EMOTICONS.PLACEHOLDER_VALUE
+                  data-default@: '\Grav\Plugin\TextFormatterPlugin::getEmoticons'
                   validate:
                     type: array
