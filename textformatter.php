@@ -220,17 +220,14 @@ class TextFormatterPlugin extends Plugin
     /**
      * Initialize plugin and all dependencies.
      *
-     * @return \Grav\Plugin\TextFormattter   Returns a TextFormattter instance.
+     * @return \Grav\Plugin\TextFormattter Returns a TextFormattter instance.
      */
     protected function init()
     {
         if (!$this->textformatter) {
-            // Autoload classes
-            $autoload = __DIR__ . '/vendor/autoload.php';
-            if (!is_file($autoload)) {
-                throw new \Exception('Textformatter Plugin failed to load. Composer dependencies not met.');
-            }
-            require_once $autoload;
+            // Use built-in autoloader
+            $this->grav['loader']->addPsr4('s9e\\TextFormatter\\',
+                [__DIR__ . '/vendor/s9e/text-formatter/src']);
 
             // Initialize TextFormatter class
             require_once(__DIR__ . '/classes/TextFormatter.php');
