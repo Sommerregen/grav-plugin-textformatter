@@ -1,10 +1,7 @@
 # Global plugin configurations
 
-enabled: true                # Set to false to disable this plugin completely
-
-# Default options for TextFormatter configuration
-
-process: false
+enabled: true                 # Set to false to disable this plugin completely
+active: true                  # Enable or disable this plugin for a page
 
 # Global and page specific configurations
 
@@ -60,6 +57,8 @@ fancypants: true              # Provide enhanced typography, aka "fancy Unicode 
 
 # Allows HTML comments to be used, enables a whitelist of HTML elements and escapes HTML entities
 html:
+  enabled: true
+
   comments: true              # Allow HTML comments to be used
   entities: true              # Allow HTML entities to be used.
 

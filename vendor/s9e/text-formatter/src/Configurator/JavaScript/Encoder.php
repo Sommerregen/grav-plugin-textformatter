@@ -2,7 +2,7 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Configurator\JavaScript;
@@ -42,7 +42,7 @@ class Encoder
 	}
 	protected function encodeArray(array $array)
 	{
-		return (empty($array) || \array_keys($array) === \range(0, \count($array) - 1)) ? $this->encodeIndexedArray($array) : $this->encodeAssociativeArray($array);
+		return ($this->isIndexedArray($array)) ? $this->encodeIndexedArray($array) : $this->encodeAssociativeArray($array);
 	}
 	protected function encodeAssociativeArray(array $array, $preserveNames = \false)
 	{
@@ -51,7 +51,7 @@ class Encoder
 		$sep = '';
 		foreach ($array as $k => $v)
 		{
-			$src .= $sep . $this->encodePropertyName($k, $preserveNames) . ':' . $this->encode($v);
+			$src .= $sep . $this->encodePropertyName("$k", $preserveNames) . ':' . $this->encode($v);
 			$sep = ',';
 		}
 		$src .= '}';
@@ -90,17 +90,25 @@ class Encoder
 	}
 	protected function encodeRegexp(Regexp $regexp)
 	{
-		return (string) $regexp->toJS();
+		return $regexp->getJS();
 	}
 	protected function encodeScalar($value)
 	{
 		return \json_encode($value);
+	}
+	protected function isIndexedArray(array $array)
+	{
+		if (empty($array))
+			return \true;
+		if (isset($array[0]) && \array_keys($array) === \range(0, \count($array) - 1))
+			return \true;
+		return \false;
 	}
 	protected function isLegalProp($name)
 	{
 		$reserved = array('abstract', 'boolean', 'break', 'byte', 'case', 'catch', 'char', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'double', 'else', 'enum', 'export', 'extends', 'false', 'final', 'finally', 'float', 'for', 'function', 'goto', 'if', 'implements', 'import', 'in', 'instanceof', 'int', 'interface', 'let', 'long', 'native', 'new', 'null', 'package', 'private', 'protected', 'public', 'return', 'short', 'static', 'super', 'switch', 'synchronized', 'this', 'throw', 'throws', 'transient', 'true', 'try', 'typeof', 'var', 'void', 'volatile', 'while', 'with');
 		if (\in_array($name, $reserved, \true))
 			return \false;
-		return (bool) \preg_match('#^[$_\\pL][$_\\pL\\pNl]+$#Du', $name);
+		return (bool) \preg_match('#^(?![0-9])[$_\\pL][$_\\pL\\pNl]+$#Du', $name);
 	}
 }

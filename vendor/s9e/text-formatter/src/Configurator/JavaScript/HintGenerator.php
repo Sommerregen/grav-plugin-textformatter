@@ -2,35 +2,47 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Configurator\JavaScript;
 use ReflectionClass;
+use s9e\TextFormatter\Configurator\Collections\PluginCollection;
 class HintGenerator
 {
 	protected $config;
 	protected $hints;
+	protected $plugins;
 	protected $xsl;
 	public function getHints()
 	{
 		$this->hints = array();
+		$this->setPluginsHints();
 		$this->setRenderingHints();
 		$this->setRulesHints();
 		$this->setTagsHints();
 		$js = "/** @const */ var HINT={};\n";
 		\ksort($this->hints);
 		foreach ($this->hints as $hintName => $hintValue)
-			$js .= '/** @const */ HINT.' . $hintName . '=' . $hintValue . ";\n";
+			$js .= '/** @const */ HINT.' . $hintName . '=' . \json_encode($hintValue) . ";\n";
 		return $js;
 	}
 	public function setConfig(array $config)
 	{
 		$this->config = $config;
 	}
+	public function setPlugins(PluginCollection $plugins)
+	{
+		$this->plugins = $plugins;
+	}
 	public function setXSL($xsl)
 	{
 		$this->xsl = $xsl;
+	}
+	protected function setPluginsHints()
+	{
+		foreach ($this->plugins as $plugins)
+			$this->hints += $plugins->getJSHints();
 	}
 	protected function setRenderingHints()
 	{
@@ -40,6 +52,7 @@ class HintGenerator
 	{
 		$this->hints['closeAncestor']   = 0;
 		$this->hints['closeParent']     = 0;
+		$this->hints['createChild']     = 0;
 		$this->hints['fosterParent']    = 0;
 		$this->hints['requireAncestor'] = 0;
 		$flags = 0;

@@ -1,4 +1,4 @@
-var hasEscapedChars, startTagLen, startTagPos, endTagPos, endTagLen;
+var hasEscapedChars, hasRefs, refs, startTagLen, startTagPos, endTagPos, endTagLen;
 
 // Unlike the PHP parser, init() must not take an argument
 init();
@@ -6,18 +6,77 @@ init();
 // Match block-level markup as well as forced line breaks
 matchBlockLevelMarkup();
 
-// Inline code must be done first to avoid false positives in other markup
+// Capture link references after block markup as been overwritten
+matchLinkReferences();
+
+// Inline code must be done first to avoid false positives in other inline markup
 matchInlineCode();
 
-// Images must be matched before links
+// Do the rest of inline markup. Images must be matched before links
 matchImages();
-
-// Do the rest of inline markup
-matchInlineLinks();
+matchLinks();
 matchStrikethrough();
 matchSuperscript();
 matchEmphasis();
 matchForcedLineBreaks();
+
+/**
+* Add an image tag for given text span
+*
+* @param {!number} startTagPos Start tag position
+* @param {!number} endTagPos   End tag position
+* @param {!number} endTagLen   End tag length
+* @param {!string} linkInfo    URL optionally followed by space and a title
+* @param {!string} alt         Value for the alt attribute
+*/
+function addImageTag(startTagPos, endTagPos, endTagLen, linkInfo, alt)
+{
+	var tag = addTagPair('IMG', startTagPos, 2, endTagPos, endTagLen);
+	setLinkAttributes(tag, linkInfo, 'src');
+	tag.setAttribute('alt', decode(alt));
+
+	// Overwrite the markup
+	overwrite(startTagPos, endTagPos + endTagLen - startTagPos);
+}
+
+/**
+* Add the tag pair for an inline code span
+*
+* @param {!Object} left  Left marker
+* @param {!Object} right Right marker
+*/
+function addInlineCodeTags(left, right)
+{
+	var startTagPos = left.pos,
+		startTagLen = left.len + left.trimAfter,
+		endTagPos   = right.pos - right.trimBefore,
+		endTagLen   = right.len + right.trimBefore;
+	addTagPair('C', startTagPos, startTagLen, endTagPos, endTagLen);
+	overwrite(startTagPos, endTagPos + endTagLen - startTagPos);
+}
+
+/**
+* Add an image tag for given text span
+*
+* @param {!number} startTagPos Start tag position
+* @param {!number} endTagPos   End tag position
+* @param {!number} endTagLen   End tag length
+* @param {!string} linkInfo    URL optionally followed by space and a title
+*/
+function addLinkTag(startTagPos, endTagPos, endTagLen, linkInfo)
+{
+	var tag = addTagPair('URL', startTagPos, 1, endTagPos, endTagLen);
+	setLinkAttributes(tag, linkInfo, 'url');
+
+	// Give the link a slightly worse priority if this is a implicit reference and a slightly
+	// better priority if it's an explicit reference or an inline link or  to give it precedence
+	// over possible BBCodes such as [b](https://en.wikipedia.org/wiki/B)
+	tag.setSortPriority((endTagLen === 1) ? 1 : -1);
+
+	// Overwrite the markup without touching the link's text
+	overwrite(startTagPos, 1);
+	overwrite(endTagPos,   endTagLen);
+}
 
 /**
 * Close a list at given offset
@@ -40,6 +99,24 @@ function closeList(list, textBoundary)
 }
 
 /**
+* Compute the amount of text to ignore at the start of a quote line
+*
+* @param  {!string} str           Original quote markup
+* @param  {!number} maxQuoteDepth Maximum quote depth
+* @return {!number}               Number of characters to ignore
+*/
+function computeQuoteIgnoreLen(str, maxQuoteDepth)
+{
+	var remaining = str;
+	while (--maxQuoteDepth >= 0)
+	{
+		remaining = remaining.replace(/^ *> ?/, '');
+	}
+
+	return str.length - remaining.length;
+}
+
+/**
 * Decode a chunk of encoded text to be used as an attribute value
 *
 * Decodes escaped literals and removes slashes and 0x1A characters
@@ -49,7 +126,11 @@ function closeList(list, textBoundary)
 */
 function decode(str)
 {
-	str = str.replace(/[\\\x1A]/g, '');
+	if (HINT.LITEDOWN_DECODE_HTML_ENTITIES && config.decodeHtmlEntities && str.indexOf('&') > -1)
+	{
+		str = html_entity_decode(str);
+	}
+	str = str.replace(/\x1A/g, '');
 
 	if (hasEscapedChars)
 	{
@@ -58,9 +139,10 @@ function decode(str)
 			function (seq)
 			{
 				return {
-					"\x1B0": '!', "\x1B1": '"',  "\x1B2": ')', "\x1B3": '*',
-					"\x1B4": '[', "\x1B5": '\\', "\x1B6": ']', "\x1B7": '^',
-					"\x1B8": '_', "\x1B9": '`',  "\x1BA": '~'
+					"\x1B0": '!', "\x1B1": '"', "\x1B2": "'", "\x1B3": '(',
+					"\x1B4": ')', "\x1B5": '*', "\x1B6": '[', "\x1B7": '\\',
+					"\x1B8": ']', "\x1B9": '^', "\x1BA": '_', "\x1BB": '`',
+					"\x1BC": '~'
 				}[seq];
 			}
 		);
@@ -78,14 +160,14 @@ function decode(str)
 function encode(str)
 {
 	return str.replace(
-		/\\[!")*[\\\]^_`~]/g,
+		/\\[!"'()*[\\\]^_`~]/g,
 		function (str)
 		{
 			return {
-				'\\!': "\x1B0", '\\"': "\x1B1", '\\)':  "\x1B2",
-				'\\*': "\x1B3", '\\[': "\x1B4", '\\\\': "\x1B5",
-				'\\]': "\x1B6", '\\^': "\x1B7", '\\_':  "\x1B8",
-				'\\`': "\x1B9", '\\~': "\x1BA"
+				'\\!': "\x1B0", '\\"': "\x1B1", "\\'": "\x1B2", '\\(' : "\x1B3",
+				'\\)': "\x1B4", '\\*': "\x1B5", '\\[': "\x1B6", '\\\\': "\x1B7",
+				'\\]': "\x1B8", '\\^': "\x1B9", '\\_': "\x1BA", '\\`' : "\x1BB",
+				'\\~': "\x1BC"
 			}[str];
 		}
 	);
@@ -146,6 +228,56 @@ function getEmphasisByBlock(regexp, pos)
 }
 
 /**
+* Capture and return inline code markers
+*
+* @return {!Array<!Object>}
+*/
+function getInlineCodeMarkers()
+{
+	var pos = text.indexOf('`');
+	if (pos < 0)
+	{
+		return [];
+	}
+
+	var regexp   = /(`+)(\s*)[^\x17`]*/g,
+		trimNext = 0,
+		markers  = [],
+		_text    = text.replace(/\x1BB/g, '\\`'),
+		m;
+	regexp.lastIndex = pos;
+	while (m = regexp.exec(_text))
+	{
+		markers.push({
+			pos        : m['index'],
+			len        : m[1].length,
+			trimBefore : trimNext,
+			trimAfter  : m[2].length,
+			next       : m['index'] + m[0].length
+		});
+		trimNext = m[0].length - m[0].replace(/\s+$/, '').length;
+	}
+
+	return markers;
+}
+
+/**
+* Capture and return labels used in current text
+*
+* @return {!Object} Labels' text position as keys, lowercased text content as values
+*/
+function getLabels()
+{
+	var labels = {}, m, regexp = /\[((?:[^\x17[\]]|\[[^\x17[\]]*\])*)\]/g;
+	while (m = regexp.exec(text))
+	{
+		labels[m['index']] = m[1].toLowerCase();
+	}
+
+	return labels;
+}
+
+/**
 * Capture lines that contain a Setext-tyle header
 *
 * @return {!Object}
@@ -199,12 +331,7 @@ function getSetextLines()
 function ignoreEmphasis(matchPos, matchLen)
 {
 	// Ignore single underscores between alphanumeric characters
-	if (text[matchPos] === '_' && matchLen === 1 && isSurroundedByAlnum(matchPos, matchLen))
-	{
-		return true;
-	}
-
-	return false;
+	return (text[matchPos] === '_' && matchLen === 1 && isSurroundedByAlnum(matchPos, matchLen));
 }
 
 /**
@@ -297,7 +424,7 @@ function matchBlockLevelMarkup()
 	// further matches
 	var matches = [],
 		m,
-		regexp = /^(?:(?=[-*+\d \t>`~#_])((?: {0,3}> ?)+)?([ \t]+)?(\* *\* *\*[* ]*$|- *- *-[- ]*$|_ *_ *_[_ ]*$)?((?:[-*+]|\d+\.)[ \t]+(?=\S))?[ \t]*(#{1,6}[ \t]+|```+.*|~~~+.*)?)?/gm;
+		regexp = /^(?:(?=[-*+\d \t>`~#_])((?: {0,3}> ?)+)?([ \t]+)?(\* *\* *\*[* ]*$|- *- *-[- ]*$|_ *_ *_[_ ]*$)?((?:[-*+]|\d+\.)[ \t]+(?=\S))?[ \t]*(#{1,6}[ \t]+|```+[^`\n]*$|~~~+[^~\n]*$)?)?/gm;
 	while (m = regexp.exec(text))
 	{
 		matches.push(m);
@@ -311,10 +438,11 @@ function matchBlockLevelMarkup()
 
 	matches.forEach(function(m)
 	{
-		var matchPos  = m['index'],
-			matchLen  = m[0].length;
+		var matchPos = m['index'],
+			matchLen = m[0].length;
 
-		ignoreLen = 0;
+		ignoreLen  = 0;
+		quoteDepth = 0;
 
 		// If the last line was empty then this is not a continuation, and vice-versa
 		continuation = !lineIsEmpty;
@@ -337,14 +465,18 @@ function matchBlockLevelMarkup()
 		{
 			quoteDepth = m[1].length - m[1].replace(/>/g, '').length;
 			ignoreLen  = m[1].length;
-		}
-		else
-		{
-			quoteDepth = 0;
+			if (codeTag && codeTag.hasAttribute('quoteDepth'))
+			{
+				quoteDepth = Math.min(quoteDepth, codeTag.getAttribute('quoteDepth'));
+				ignoreLen  = computeQuoteIgnoreLen(m[1], quoteDepth);
+			}
+
+			// Overwrite quote markup
+			overwrite(matchPos, ignoreLen);
 		}
 
 		// Close supernumerary quotes
-		if (quoteDepth < quotesCnt && !continuation && !lineIsEmpty)
+		if (quoteDepth < quotesCnt && !continuation)
 		{
 			newContext = true;
 
@@ -373,11 +505,10 @@ function matchBlockLevelMarkup()
 		// Compute the width of the indentation
 		var indentWidth = 0,
 			indentPos   = 0;
-		if (m[2])
+		if (m[2] && !codeFence)
 		{
 			indentStr = m[2];
 			indentLen = indentStr.length;
-			maxIndent = (codeFence) ? 0 : codeIndent;
 
 			do
 			{
@@ -390,7 +521,7 @@ function matchBlockLevelMarkup()
 					indentWidth = (indentWidth + 4) & ~3;
 				}
 			}
-			while (++indentPos < indentLen && indentWidth < maxIndent);
+			while (++indentPos < indentLen && indentWidth < codeIndent);
 		}
 
 		// Test whether we're out of a code block
@@ -452,9 +583,9 @@ function matchBlockLevelMarkup()
 		{
 			var hasListItem = !!m[4];
 
-			if (!indentWidth && !continuation && !hasListItem && !lineIsEmpty)
+			if (!indentWidth && !continuation && !hasListItem)
 			{
-				// Start of a new paragraph
+				// Start of a new context
 				listIndex = -1;
 			}
 			else if (continuation && !hasListItem)
@@ -549,6 +680,12 @@ function matchBlockLevelMarkup()
 					if (m[4].indexOf('.') > -1)
 					{
 						listTag.setAttribute('type', 'decimal');
+
+						var start = +m[4];
+						if (start !== 1)
+						{
+							listTag.setAttribute('start', start);
+						}
 					}
 
 					// Record the new list depth
@@ -607,7 +744,7 @@ function matchBlockLevelMarkup()
 				tagPos = matchPos + ignoreLen;
 				tagLen = lfPos - tagPos;
 
-				if (codeTag && m[5].charAt(0) === codeFence)
+				if (codeTag && m[5] === codeFence)
 				{
 					endTag = addEndTag('CODE', tagPos, tagLen);
 					endTag.pairWith(codeTag);
@@ -624,13 +761,14 @@ function matchBlockLevelMarkup()
 				{
 					// Create code block
 					codeTag   = addStartTag('CODE', tagPos, tagLen);
-					codeFence = m[5].charAt(0);
+					codeFence = m[5].replace(/[^`~]+/, '');
+					codeTag.setAttribute('quoteDepth', quoteDepth);
 
 					// Ignore the next character, which should be a newline
 					addIgnoreTag(tagPos + tagLen, 1);
 
 					// Add the language if present, e.g. ```php
-					var lang = m[5].replace(/^[`~]*/, '');
+					var lang = m[5].replace(/^[`~\s]*/, '').replace(/\s+$/, '');
 					if (lang !== '')
 					{
 						codeTag.setAttribute('lang', lang);
@@ -638,7 +776,7 @@ function matchBlockLevelMarkup()
 				}
 			}
 		}
-		else if (m[3] && !listsCnt)
+		else if (m[3] && !listsCnt && text.charAt(matchPos + matchLen) !== "\x17")
 		{
 			// Horizontal rule
 			addSelfClosingTag('HR', matchPos + ignoreLen, matchLen - ignoreLen);
@@ -657,9 +795,6 @@ function matchBlockLevelMarkup()
 				setextLines[lfPos].endTagPos,
 				setextLines[lfPos].endTagLen
 			);
-
-			// Overwrite the LF to prevent forced line breaks from matching
-			overwrite(lfPos, 1);
 
 			// Mark the end of the Setext line
 			markBoundary(setextLines[lfPos].endTagPos + setextLines[lfPos].endTagLen);
@@ -727,96 +862,185 @@ function matchForcedLineBreaks()
 */
 function matchImages()
 {
-	if (text.indexOf('![') === -1)
+	var pos = text.indexOf('![');
+	if (pos === -1)
 	{
 		return;
 	}
-
-	var m, regexp = /!\[([^\x17\]]*)] ?\(([^\x17 ")]+)(?: "([^\x17"]*)")?\)/g;
-	while (m = regexp.exec(text))
+	if (text.indexOf('](', pos) > 0)
 	{
-		var matchPos    = m['index'],
-			matchLen    = m[0].length,
-			contentLen  = m[1].length,
-			startTagPos = matchPos,
-			startTagLen = 2,
-			endTagPos   = startTagPos + startTagLen + contentLen,
-			endTagLen   = matchLen - startTagLen - contentLen;
-
-		var startTag = addTagPair('IMG', startTagPos, startTagLen, endTagPos, endTagLen);
-		startTag.setAttribute('alt', decode(m[1]));
-		startTag.setAttribute('src', decode(m[2]));
-
-		if (m[3] > '')
-		{
-			startTag.setAttribute('title', decode(m[3]));
-		}
-
-		// Overwrite the markup
-		overwrite(matchPos, matchLen);
+		matchInlineImages();
+	}
+	if (hasRefs)
+	{
+		matchReferenceImages();
 	}
 }
 
 /**
-* Match inline code
+* Match inline images markup
+*/
+function matchInlineImages()
+{
+	var m, regexp = /!\[(?:[^\x17[\]]|\[[^\x17[\]]*\])*\]\(((?:[^\x17\s()]|\([^\x17\s()]*\))*(?: +(?:"[^\x17]*?"|'[^\x17]*?'|\([^\x17\)]*?\)))?)\)/g;
+	while (m = regexp.exec(text))
+	{
+		var linkInfo    = m[1],
+			startTagPos = m['index'],
+			endTagLen   = 3 + linkInfo.length,
+			endTagPos   = startTagPos + m[0].length - endTagLen,
+			alt         = m[0].substr(2, m[0].length - endTagLen - 2);
+
+		addImageTag(startTagPos, endTagPos, endTagLen, linkInfo, alt);
+	}
+}
+
+/**
+* Match reference images markup
+*/
+function matchReferenceImages()
+{
+	var m, regexp = /!\[((?:[^\x17[\]]|\[[^\x17[\]]*\])*)\](?: ?\[([^\x17[\]]+)\])?/g;
+	while (m = regexp.exec(text))
+	{
+		var startTagPos = +m['index'],
+			endTagPos   = startTagPos + 2 + m[1].length,
+			endTagLen   = 1,
+			alt         = m[1],
+			id          = alt;
+
+		if (m[2] > '' && refs[m[2]])
+		{
+			endTagLen = m[0].length - alt.length - 2;
+			id        = m[2];
+		}
+		else if (!refs[id])
+		{
+			continue;
+		}
+
+		addImageTag(startTagPos, endTagPos, endTagLen, refs[id], alt);
+	}
+}
+
+/**
+* Match inline code spans
 */
 function matchInlineCode()
 {
-	if (text.indexOf('`') === -1)
+	var markers = getInlineCodeMarkers(),
+		i       = -1,
+		cnt     = markers.length;
+	while (++i < (cnt - 1))
 	{
-		return;
-	}
-
-	var m, regexp = /(``?)[^\x17]*?[^`]\1(?!`)/g;
-	while (m = regexp.exec(text))
-	{
-		var matchPos = m['index'],
-			matchLen = m[0].length,
-			tagLen   = m[1].length;
-
-		addTagPair('C', matchPos, tagLen, matchPos + matchLen - tagLen, tagLen);
-
-		// Overwrite the markup
-		overwrite(matchPos, matchLen);
+		var pos = markers[i].next,
+			j   = i;
+		if (text.charAt(markers[i].pos) !== '`')
+		{
+			// Adjust the left marker if its first backtick was escaped
+			++markers[i].pos;
+			--markers[i].len;
+		}
+		while (++j < cnt && markers[j].pos === pos)
+		{
+			if (markers[j].len === markers[i].len)
+			{
+				addInlineCodeTags(markers[i], markers[j]);
+				i = j;
+				break;
+			}
+			pos = markers[j].next;
+		}
 	}
 }
 
 /**
-* Match inline links
+* Match inline links markup
 */
 function matchInlineLinks()
 {
-	if (text.indexOf('[') === -1)
+	var m, regexp = /\[(?:[^\x17[\]]|\[[^\x17[\]]*\])*\]\(((?:[^\x17\s()]|\([^\x17\s()]*\))*(?: +(?:"[^\x17]*?"|'[^\x17]*?'|\([^\x17\)]*?\)))?)\)/g;
+	while (m = regexp.exec(text))
+	{
+		var linkInfo    = m[1],
+			startTagPos = m['index'],
+			endTagLen   = 3 + linkInfo.length,
+			endTagPos   = startTagPos + m[0].length - endTagLen;
+
+		addLinkTag(startTagPos, endTagPos, endTagLen, linkInfo);
+	}
+}
+
+/**
+* Capture link reference definitions in current text
+*/
+function matchLinkReferences()
+{
+	hasRefs = false;
+	refs    = {};
+	if (text.indexOf(']:') === -1)
 	{
 		return;
 	}
 
-	var m, regexp = /\[([^\x17\]]+)] ?\(([^\x17 ()]+(?:\([^\x17 ()]+\)[^\x17 ()]*)*[^\x17 )]*)(?: "(.*?)")?\)/g;
+	var m, regexp = /^\x1A* {0,3}\[([^\x17\]]+)\]: *([^\s\x17]+ *(?:"[^\x17]*?"|'[^\x17]*?'|\([^\x17\)]*?\))?)[^\x17\n]*\n?/gm;
 	while (m = regexp.exec(text))
 	{
-		var matchPos    = m['index'],
-			matchLen    = m[0].length,
-			contentLen  = m[1].length,
-			startTagPos = matchPos,
-			startTagLen = 1,
-			endTagPos   = startTagPos + startTagLen + contentLen,
-			endTagLen   = matchLen - startTagLen - contentLen;
+		addIgnoreTag(m['index'], m[0].length).setSortPriority(-2);
 
-		var tag = addTagPair('URL', startTagPos, startTagLen, endTagPos, endTagLen);
-		tag.setAttribute('url', decode(m[2]));
-
-		if (m[3] > '')
+		// Ignore the reference if it already exists
+		var id = m[1].toLowerCase();
+		if (refs[id])
 		{
-			tag.setAttribute('title', decode(m[3]));
+			continue;
 		}
 
-		// Give the link a slightly better priority to give it precedence over
-		// possible BBCodes such as [b](https://en.wikipedia.org/wiki/B)
-		tag.setSortPriority(-1);
+		hasRefs  = true;
+		refs[id] = m[2];
+	}
+}
 
-		// Overwrite the markup without touching the link's text
-		overwrite(startTagPos, startTagLen);
-		overwrite(endTagPos,   endTagLen);
+/**
+* Match inline and reference links
+*/
+function matchLinks()
+{
+	if (text.indexOf('](') !== -1)
+	{
+		matchInlineLinks();
+	}
+	if (hasRefs)
+	{
+		matchReferenceLinks();
+	}
+}
+
+/**
+* Match reference links markup
+*/
+function matchReferenceLinks()
+{
+	var labels = getLabels(), startTagPos;
+	for (startTagPos in labels)
+	{
+		var id        = labels[startTagPos],
+			labelPos  = +startTagPos + 2 + id.length,
+			endTagPos = labelPos - 1,
+			endTagLen = 1;
+
+		if (text.charAt(labelPos) === ' ')
+		{
+			++labelPos;
+		}
+		if (labels[labelPos] > '' && refs[labels[labelPos]])
+		{
+			id        = labels[labelPos];
+			endTagLen = labelPos + 2 + id.length - endTagPos;
+		}
+		if (refs[id])
+		{
+			addLinkTag(+startTagPos, endTagPos, endTagLen, refs[id]);
+		}
 	}
 }
 
@@ -954,4 +1178,29 @@ function processEmphasisBlock(block)
 		}
 		buffered += remaining;
 	});
+}
+
+/**
+* Set a URL or IMG tag's attributes
+*
+* @param {!Tag}    tag      URL or IMG tag
+* @param {!string} linkInfo Link's info: an URL optionally followed by spaces and a title
+* @param {!string} attrName Name of the URL attribute
+*/
+function setLinkAttributes(tag, linkInfo, attrName)
+{
+	var url   = linkInfo,
+		title = '',
+		pos   = linkInfo.indexOf(' ')
+	if (pos !== -1)
+	{
+		url   = linkInfo.substr(0, pos);
+		title = linkInfo.substr(pos).replace(/^\s*\S/, '').replace(/\S\s*$/, '');
+	}
+
+	tag.setAttribute(attrName, decode(url));
+	if (title > '')
+	{
+		tag.setAttribute('title', decode(title));
+	}
 }

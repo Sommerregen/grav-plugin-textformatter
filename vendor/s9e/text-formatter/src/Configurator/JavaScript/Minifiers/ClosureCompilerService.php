@@ -2,21 +2,21 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Configurator\JavaScript\Minifiers;
 use RuntimeException;
-use s9e\TextFormatter\Configurator\JavaScript\Minifier;
-class ClosureCompilerService extends Minifier
+use s9e\TextFormatter\Configurator\JavaScript\OnlineMinifier;
+class ClosureCompilerService extends OnlineMinifier
 {
 	public $compilationLevel = 'ADVANCED_OPTIMIZATIONS';
 	public $excludeDefaultExterns = \true;
 	public $externs;
-	public $timeout = 10;
 	public $url = 'http://closure-compiler.appspot.com/compile';
 	public function __construct()
 	{
+		parent::__construct();
 		$this->externs = \file_get_contents(__DIR__ . '/../externs.service.js');
 	}
 	public function getCacheDifferentiator()
@@ -28,32 +28,14 @@ class ClosureCompilerService extends Minifier
 	}
 	public function minify($src)
 	{
-		$params = array(
-			'compilation_level' => $this->compilationLevel,
-			'js_code'           => $src,
-			'output_format'     => 'json',
-			'output_info'       => 'compiled_code'
-		);
-		if ($this->excludeDefaultExterns && $this->compilationLevel === 'ADVANCED_OPTIMIZATIONS')
-		{
-			$params['exclude_default_externs'] = 'true';
-			$params['js_externs'] = $this->externs;
-		}
-		$content = \http_build_query($params) . '&output_info=errors';
-		$response = \file_get_contents(
-			$this->url,
-			\false,
-			\stream_context_create(array(
-				'http' => array(
-					'method'  => 'POST',
-					'timeout' => $this->timeout,
-					'header'  => "Connection: close\r\nContent-length: " . \strlen($content) . "\r\nContent-type: application/x-www-form-urlencoded",
-					'content' => $content
-				)
-			))
-		);
-		if (!$response)
+		$body     = $this->generateRequestBody($src);
+		$response = $this->query($body);
+		if ($response === \false)
 			throw new RuntimeException('Could not contact the Closure Compiler service');
+		return $this->decodeResponse($response);
+	}
+	protected function decodeResponse($response)
+	{
 		$response = \json_decode($response, \true);
 		if (\is_null($response))
 		{
@@ -78,5 +60,29 @@ class ClosureCompilerService extends Minifier
 			throw new RuntimeException('Compilation error: ' . $error['error']);
 		}
 		return $response['compiledCode'];
+	}
+	protected function generateRequestBody($src)
+	{
+		$params = array(
+			'compilation_level' => $this->compilationLevel,
+			'js_code'           => $src,
+			'output_format'     => 'json',
+			'output_info'       => 'compiled_code'
+		);
+		if ($this->excludeDefaultExterns && $this->compilationLevel === 'ADVANCED_OPTIMIZATIONS')
+		{
+			$params['exclude_default_externs'] = 'true';
+			$params['js_externs'] = $this->externs;
+		}
+		$body = \http_build_query($params) . '&output_info=errors';
+		return $body;
+	}
+	protected function query($body)
+	{
+		return $this->httpClient->post(
+			$this->url,
+			array('Content-Type: application/x-www-form-urlencoded'),
+			$body
+		);
 	}
 }

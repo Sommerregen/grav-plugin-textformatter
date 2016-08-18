@@ -2,7 +2,7 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Plugins\MediaEmbed\Configurator;
@@ -28,7 +28,7 @@ abstract class TemplateGenerator
 			$this->attributes['style']['position'] = 'absolute';
 			$this->attributes['style']['left'] = '0';
 			$outerStyle = 'display:inline-block;width:100%;max-width:' . $this->attributes['width'] . 'px';
-			$innerStyle = 'position:relative;' . $this->getResponsivePadding();
+			$innerStyle = 'overflow:hidden;position:relative;' . $this->getResponsivePadding();
 			$prepend .= '<div>' . $this->generateAttributes(array('style' => $outerStyle));
 			$prepend .= '<div>' . $this->generateAttributes(array('style' => $innerStyle));
 			$append  .= '</div></div>';
@@ -58,6 +58,8 @@ abstract class TemplateGenerator
 		
 		if (!empty($this->attributes['padding-height']))
 			$css .= ';padding-bottom:calc(<xsl:value-of select="100*' . $height . ' div' . $width . '"/>% + ' . $paddingHeight . 'px)';
+		if (\strpos($width, '@') !== \false)
+			$css = '<xsl:if test="@width&gt;0">' . $css . '</xsl:if>';
 		return $css;
 	}
 	protected function generateAttributes(array $attributes)

@@ -27,13 +27,8 @@ var punycode = {};
  * @return {string}
  */
 punycode.toASCII;
-/** @constructor */ function XSLTProcessor() {}
-/**
- * @param {Node} externalNode
- * @param {boolean} deep
- * @return {Node}
- */
-Document.prototype.importNode = function(externalNode, deep) {};
+/** @constructor */
+function XSLTProcessor() {}
 /**
  * @type {string}
  * @implicitCast
@@ -77,6 +72,10 @@ Document.prototype.createElement = function(tagName, opt_typeExtension) {};
 function DocumentFragment() {}
 /**
  * @constructor
+ * @implements {IObject<(string|number), T>}
+ * @implements {IArrayLike<T>}
+ * @implements {Iterable<T>}
+ * @template T
  */
 function NamedNodeMap() {}
 /**
@@ -99,7 +98,7 @@ function Node() {}
  */
 Node.prototype.appendChild = function(newChild) {};
 /**
- * @type {!NodeList}
+ * @type {!NodeList<!Node>}
  */
 Node.prototype.childNodes;
 /**
@@ -145,6 +144,9 @@ Node.prototype.parentNode;
 Node.prototype.removeChild = function(oldChild) {};
 /**
  * @constructor
+ * @implements {IArrayLike<T>}
+ * @implements {Iterable<T>}
+ * @template T
  */
 function NodeList() {}
 /**
@@ -160,6 +162,12 @@ function Element() {}
  * @constructor
  */
 function Window() {}
+/**
+ * @param {Node} externalNode
+ * @param {boolean} deep
+ * @return {Node}
+ */
+Document.prototype.importNode = function(externalNode, deep) {};
 /**
  * @constructor
  * @extends {Document}

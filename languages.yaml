@@ -2,14 +2,15 @@
 de:
   PLUGINS:
     TEXTFORMATTER:
-      GLOBAL_CONFIG: "Globale Einstellungen"
-      DEFAULT_CONFIG: "Standardeinstellungen für TextFormatter"
-      SPECIFIC_CONFIG: "Globale und seitenspezifische Einstellungen"
       PLUGIN_STATUS: "Plugin Status"
+      CONTENT: "Inhalt"
+      SMILEYS: "Smileys"
 
-      TEXTFORMATTER: "TextFormatter"
-      PROCESS: "TextFormatter anwenden"
+      TEXTFORMATTER: "Text Formatter"
       STATUS: "Status"
+
+      ACTIVE: 'Aktiv'
+      ACTIVE_HELP: 'Option zum seitenspezifischen (De-)Aktivieren des Plugins.'
 
       AUTOEMAIL:
         SECTION: "Auto E-Mail"
@@ -34,10 +35,12 @@ de:
         SECTION_HELP: "Erlaubt die Verwendung von BBCodes."
 
         BBCODES: "BBCodes"
-        BBCODES_HELP: "Füge vordefinierte BBCodes aus der Paketverwaltung hinzu (<a href='https://github.com/s9e/TextFormatter/blob/master/src/Plugins/BBCodes/Configurator/repository.xml'>Dokumentation</a>)"
+        BBCODES_HELP: "Füge vordefinierte BBCodes aus der Paketverwaltung hinzu"
+        BBCODES_DESCRIPTION: "Weitere Informationen siehe <a href='https://github.com/s9e/TextFormatter/blob/master/src/Plugins/BBCodes/Configurator/repository.xml'title='TextFormatter Dokumentation'>Dokumentation</a>."
         CUSTOM:
           LABEL: "Benutzerdefinierte BBCodes"
-          HELP: "Füge eigene BBCodes mit Tokens, Regeln und einem Template hinzu (<a href='http://s9etextformatter.readthedocs.org/Plugins/BBCodes/Custom_BBCode_syntax/'>Dokumentation</a>)"
+          HELP: "Füge eigene BBCodes mit Tokens, Regeln und einem Template hinzu."
+          DESCRIPTION: "Weitere Informationen siehe <a href='http://s9etextformatter.readthedocs.org/Plugins/BBCodes/Custom_BBCode_syntax/' title='TextFormatter Dokumentation'>Dokumentation</a>."
           PLACEHOLDER_KEY: "<BBCode>"
           PLACEHOLDER_VALUE: "<Template>"
 
@@ -47,7 +50,8 @@ de:
 
         WORDS:
           LABEL: "Zenzierte Wörter"
-          HELP: "Wörter, die zensiert werden sollen. Aktzeptiert '*' als auch '?' als Platzhalter (<a href='http://s9etextformatter.readthedocs.org/Plugins/Censor/Synopsis/'>Dokumentation</a>)"
+          HELP: "Wörter, die zensiert werden sollen. Aktzeptiert '*' als auch '?' als Platzhalter."
+          DESCRIPTION: "Weitere Informationen siehe <a href='http://s9etextformatter.readthedocs.org/Plugins/Censor/Synopsis/' title='TextFormatter Dokumentation'>Dokumentation</a>."
           PLACEHOLDER_KEY: "<Wort>"
           PLACEHOLDER_VALUE: "<Zensierung>"
 
@@ -68,7 +72,8 @@ de:
         ESCAPE_ALL_HELP: "Maskiere Unicode-Zeichen (nur sinnvoll in spezifischen Situationen)"
 
         REGEX: "Maskierung basierend auf regulären Ausdruck"
-        REGEX_HELP: "Maskiere Zeichen basierend auf regulären Ausdruck (<a href='http://s9etextformatter.readthedocs.org/Plugins/Escaper/Synopsis/#how-to-escape-only-certain-characters'>Dokumentation</a>)"
+        REGEX_HELP: "Maskiere Zeichen basierend auf regulären Ausdruck"
+        REGEX_DESCRIPTION: "Weitere Informationen siehe <a href='http://s9etextformatter.readthedocs.org/Plugins/Escaper/Synopsis/#how-to-escape-only-certain-characters' title='TextFormatter Dokumentation'>Dokumentation</a>."
 
       EMOTICONS:
         SECTION: "Emoticons"
@@ -79,6 +84,8 @@ de:
 
         LABEL: "Emoticons"
         HELP: "Liste von Emoticons"
+        DESCRIPTION: "Weitere Informationen siehe <a href='http://s9etextformatter.readthedocs.io/Plugins/Emoticons/Synopsis/' title='TextFormatter Dokumentation'>Dokumentation</a>."
+
         PLACEHOLDER_KEY: "<emoticon>"
         PLACEHOLDER_VALUE: "<Dateiname.Erweiterung>"
 
@@ -87,6 +94,10 @@ de:
         SECTION_HELP: "Verbessert das Schriftbild (Typographie) durch Verwendung von Unicode-Zeichen."
 
       HTML:
+        SECTION: "HTML"
+        HELP: "<span style='color: #df1f1f;'>HINWEIS: Diese Option beeinflusst alle untenstehenden Filter.</span>"
+        DESCRIPTION: "Beeinflusst wie HTML ausgegeben wird."
+
         SECTION: "HTML Kommentare & Entitäten"
         SECTION_HELP: "Erlaubt die Verwendung von HTML-Kommentaren und maskiert HTML-Entitäten."
 
@@ -107,10 +118,12 @@ de:
         PLACEHOLDER_VALUE: "<Attribute>"
 
         SAFE_LABEL: "Whitelist von ungefährlichen HTML-Elementen"
-        SAFE_HELP: "Liste von ungefährlichen HTML-Elementen. Attribute werden durch Komma getrennt. Optioniale Attribute werden mit voranstehendem Stern '*' gekennzeichnet (<a href='http://s9etextformatter.readthedocs.org/Plugins/HTMLElements/Synopsis/'>Dokumentation</a>)"
+        SAFE_HELP: "Liste von ungefährlichen HTML-Elementen. Attribute werden durch Komma getrennt. Optioniale Attribute werden mit voranstehendem Stern '*' gekennzeichnet"
+        SAFE_DESCRIPTION: "Weitere Informationen siehe <a href='http://s9etextformatter.readthedocs.org/Plugins/HTMLElements/Synopsis/' title='TextFormatter Dokumentation'>Dokumentation</a>."
 
         UNSAFE_LABEL: "Whitelist von gefährlichen HTML-Elementen"
-        UNSAFE_HELP: "Liste von gefährlichen HTML-Elementen. Attribute werden durch Komma getrennt. Optioniale Attribute werden mit voranstehendem Stern '*' gekennzeichnet  (<a href='http://s9etextformatter.readthedocs.org/Plugins/HTMLElements/Synopsis/'>Dokumentation</a>)"
+        UNSAFE_HELP: "Liste von gefährlichen HTML-Elementen. Attribute werden durch Komma getrennt. Optioniale Attribute werden mit voranstehendem Stern '*' gekennzeichnet"
+        UNSAFE_DESCRIPTION: "Weitere Informationen siehe <a href='http://s9etextformatter.readthedocs.org/Plugins/HTMLElements/Synopsis/' title='TextFormatter Dokumentation'>Dokumentation</a>."
 
       KEYWORDS:
         SECTION: "Schlüsselwörter"
@@ -120,7 +133,8 @@ de:
         CASE_SENSITIVE_HELP: "Standardmäßig werden bei Schlüsselwörter zwischen Groß- und Kleinbuchstaben unterschieden"
 
         TEMPLATE: "Template"
-        TEMPLATE_HELP: "Template zur Darstellung von Schlüsselwörtern (<a href='http://s9etextformatter.readthedocs.org/Plugins/Keywords/Synopsis/'>Dokumentation</a>)"
+        TEMPLATE_HELP: "Template zur Darstellung von Schlüsselwörtern"
+        TEMPLATE_DESCRIPTION: "Weitere Informationen siehe <a href='http://s9etextformatter.readthedocs.org/Plugins/Keywords/Synopsis/' title='TextFormatter Dokumentation'>Dokumentation</a>."
 
         KEYWORDS:
           LABEL: "Schlüsselwörter"
@@ -135,7 +149,8 @@ de:
 
         SITES:
           LABEL: "Untersützte Seiten"
-          HELP: "Füge weitere Seiten hinzu, die du erlauben möchtest (<a href='http://s9etextformatter.readthedocs.org/Plugins/MediaEmbed/Sites/'>Dokumentation</a>)"
+          HELP: "Füge weitere Seiten hinzu, die du erlauben möchtest"
+          DESCRIPTION: "Weitere Informationen siehe <a href='http://s9etextformatter.readthedocs.org/Plugins/MediaEmbed/Sites/' title='TextFormatter Dokumentation'>Dokumentation</a>."
 
       PREG:
         SECTION: "Reguläre Ausdrücke"
@@ -143,13 +158,15 @@ de:
 
         REPLACE:
           LABEL: "Ersetzungen"
-          HELP: "Auf regulären Ausdrücken basierende Ersetzung. Werte in Klammern ('Capture groups') stehen als Attribute im XSL-Stylesheet zur Verfügung (<a href='http://s9etextformatter.readthedocs.org/Plugins/Preg/Synopsis/'>Dokumentation</a>)."
+          HELP: "Auf regulären Ausdrücken basierende Ersetzung. Werte in Klammern ('Capture groups') stehen als Attribute im XSL-Stylesheet zur Verfügung"
+          DESCRIPTION: "Weitere Informationen siehe <a href='http://s9etextformatter.readthedocs.org/Plugins/Preg/Synopsis/' title='TextFormatter Dokumentation'>Dokumentation</a>."
           PLACEHOLDER_KEY: "<Regulärer Ausdruck>"
           PLACEHOLDER_VALUE: "<Ersetzung>"
 
         MATCH:
           LABEL: "Übereinstimmungen"
-          HELP: "Sucht und ordnet jede Übereinstimmung einem bestimmten Tag zu (<a href='http://s9etextformatter.readthedocs.org/Plugins/Preg/Synopsis/#using-match'>Dokumentation</a>)."
+          HELP: "Sucht und ordnet jede Übereinstimmung einem bestimmten Tag zu"
+          DESCRIPTION: "Weitere Informationen siehe <a href='http://s9etextformatter.readthedocs.org/Plugins/Preg/Synopsis/#using-match' title='TextFormatter Dokumentation'>Dokumentation</a>."
           PLACEHOLDER_KEY: "<Regulärer Ausdruck>"
           PLACEHOLDER_VALUE: "<Tag-Name>"
 
@@ -157,17 +174,18 @@ de:
 en:
   PLUGINS:
     TEXTFORMATTER:
-      GLOBAL_CONFIG: "Global plugin configurations"
-      DEFAULT_CONFIG: "Default values for TextFormatter configuration"
-      SPECIFIC_CONFIG: "Global and page specific configurations"
       PLUGIN_STATUS: "Plugin status"
+      CONTENT: "Content"
+      SMILEYS: "Smileys"
 
-      TEXTFORMATTER: "TextFormatter"
-      PROCESS: "Process"
+      TEXTFORMATTER: "Text Formatter"
       STATUS: "Status"
 
+      ACTIVE: 'Active'
+      ACTIVE_HELP: 'Enable or disable this plugin on a page.'
+
       AUTOEMAIL:
-        SECTION: "Automail"
+        SECTION: "Autoemail"
         SECTION_HELP: "Converts plain-text emails into clickable 'mailto:' links."
 
       AUTOIMAGE:
@@ -189,10 +207,12 @@ en:
         SECTION_HELP: "Handle a very flexible flavour of the BBCode syntax."
 
         BBCODES: "BBCodes"
-        BBCODES_HELP: "Add BBCodes from repository (<a href='https://github.com/s9e/TextFormatter/blob/master/src/Plugins/BBCodes/Configurator/repository.xml'>documentation</a>)"
+        BBCODES_HELP: "Add BBCodes from repository"
+        BBCODES_DESCRIPTION: "See the <a href='https://github.com/s9e/TextFormatter/blob/master/src/Plugins/BBCodes/Configurator/repository.xml' title='TextFormatter documentation'>documentation</a> for more information."
         CUSTOM:
           LABEL: "Custom BBCodes"
-          HELP: "Add your own BBCodes using tokens, rules and a custom template (<a href='http://s9etextformatter.readthedocs.org/Plugins/BBCodes/Custom_BBCode_syntax/'>documentation</a>)"
+          HELP: "Add your own BBCodes using tokens, rules and a custom template"
+          DESCRIPTION: "See the <a href='http://s9etextformatter.readthedocs.org/Plugins/BBCodes/Custom_BBCode_syntax/' title='TextFormatter documentation'>documentation</a> for more information."
           PLACEHOLDER_KEY: "<bbcode>"
           PLACEHOLDER_VALUE: "<template>"
 
@@ -202,7 +222,8 @@ en:
 
         WORDS:
           LABEL: "Censored words"
-          HELP: "Cesors words. Accepts '*' and '?' as placeholders (<a href='http://s9etextformatter.readthedocs.org/Plugins/Censor/Synopsis/'>documentation</a>)"
+          HELP: "Cesors words. Accepts '*' and '?' as placeholders."
+          DESCRIPTION: "See the <a href='http://s9etextformatter.readthedocs.org/Plugins/Censor/Synopsis/' title='TextFormatter documentation'>documentation</a> for more information."
           PLACEHOLDER_KEY: "<word>"
           PLACEHOLDER_VALUE: "<replacement>"
 
@@ -223,7 +244,8 @@ en:
         ESCAPE_ALL_HELP: "Escape any Unicode character (only suitable in some specific situations)"
 
         REGEX: "Escape according to regular expression"
-        REGEX_HELP: "Escape according to regular expression (<a href='http://s9etextformatter.readthedocs.org/Plugins/Escaper/Synopsis/#how-to-escape-only-certain-characters'>documentation</a>)"
+        REGEX_HELP: "Escape according to regular expression"
+        REGEX_DESCRIPTION: "See the <a href='http://s9etextformatter.readthedocs.org/Plugins/Escaper/Synopsis/#how-to-escape-only-certain-characters' title='TextFormatter documentation'>documentation</a> for more information."
 
       EMOTICONS:
         SECTION: "Emoticons"
@@ -234,6 +256,8 @@ en:
 
         LABEL: "Emoticons"
         HELP: "List of emoticons"
+        DESCRIPTION: "See the <a href='http://s9etextformatter.readthedocs.io/Plugins/Emoticons/Synopsis/' title='TextFormatter documentation'>documentation</a> for more information."
+
         PLACEHOLDER_KEY: "<emoticon>"
         PLACEHOLDER_VALUE: "<filename.ext>"
 
@@ -242,6 +266,10 @@ en:
         SECTION_HELP: "Provide enhanced typography, aka 'fancy Unicode symbols'."
 
       HTML:
+        SECTION: "HTML"
+        HELP: "<span style='color: #df1f1f;'>NOTE: This option affects the status of all filters listed below.</span>"
+        DESCRIPTION: "Handles how HTML is rendered."
+
         SECTION: "HTML Comments & Entities"
         SECTION_HELP: "Allows HTML comments to be used and escapes HTML entities."
 
@@ -262,10 +290,12 @@ en:
         PLACEHOLDER_VALUE: "<attributes>"
 
         SAFE_LABEL: "Whitelist of safe HTML elements"
-        SAFE_HELP: "List of safe HTML elements. Attributes are comma-separated. Optional attributes are denoted with a preceeding star '*' (<a href='http://s9etextformatter.readthedocs.org/Plugins/HTMLElements/Synopsis/'>documentation</a>)"
+        SAFE_HELP: "List of safe HTML elements. Attributes are comma-separated. Optional attributes are denoted with a preceeding star '*'"
+        SAFE_DESCRIPTION: "See the <a href='http://s9etextformatter.readthedocs.org/Plugins/HTMLElements/Synopsis/' title='TextFormatter documentation'>documentation</a> for more information."
 
         UNSAFE_LABEL: "Whitelist of unsafe HTML elements"
-        UNSAFE_HELP: "List of unsafe HTML elements. Attributes are comma-separated. Optional attributes are denoted with a preceeding star '*' (<a href='http://s9etextformatter.readthedocs.org/Plugins/HTMLElements/Synopsis/'>documentation</a>)"
+        UNSAFE_HELP: "List of unsafe HTML elements. Attributes are comma-separated. Optional attributes are denoted with a preceeding star '*'"
+        UNSAFE_DESCRIPTION: "See the <a href='http://s9etextformatter.readthedocs.org/Plugins/HTMLElements/Synopsis/' title='TextFormatter documentation'>documentation</a> for more information."
 
       KEYWORDS:
         SECTION: "Keywords"
@@ -275,7 +305,8 @@ en:
         CASE_SENSITIVE_HELP: "Keywords are case-sensitive by default"
 
         TEMPLATE: "Template"
-        TEMPLATE_HELP: "Template to render keywords (<a href='http://s9etextformatter.readthedocs.org/Plugins/Keywords/Synopsis/'>documentation</a>)"
+        TEMPLATE_HELP: "Template to render keywords"
+        TEMPLATE_DESCRIPTION: "See the <a href='http://s9etextformatter.readthedocs.org/Plugins/Keywords/Synopsis/' title='TextFormatter documentation'>documentation</a> for more information."
 
         KEYWORDS:
           LABEL: "Keywords"
@@ -290,7 +321,8 @@ en:
 
         SITES:
           LABEL: "Sites"
-          HELP: "Add the sites you want to support (<a href='http://s9etextformatter.readthedocs.org/Plugins/MediaEmbed/Sites/'>documentation</a>)"
+          HELP: "Add the sites you want to support"
+          DESCRIPTION: "See the <a href='http://s9etextformatter.readthedocs.org/Plugins/MediaEmbed/Sites/' title='TextFormatter documentation'>documentation</a> for more information."
 
       PREG:
         SECTION: "Preg"
@@ -298,12 +330,14 @@ en:
 
         REPLACE:
           LABEL: "Replace"
-          HELP: "Regexp-based replacements. The values in the named capturing subpatterns in the matching regexp are available as attributes in the XSL replacement (<a href='http://s9etextformatter.readthedocs.org/Plugins/Preg/Synopsis/'>documentation</a>)."
+          HELP: "Regexp-based replacements. The values in the named capturing subpatterns in the matching regexp are available as attributes in the XSL replacement."
+          DESCRIPTION: "See the <a href='http://s9etextformatter.readthedocs.org/Plugins/Preg/Synopsis/' title='TextFormatter documentation'>documentation</a> for more information."
           PLACEHOLDER_KEY: "<pattern>"
           PLACEHOLDER_VALUE: "<replacement>"
 
         MATCH:
           LABEL: "Match"
-          HELP: "Match any text and assign it to a tag (<a href='http://s9etextformatter.readthedocs.org/Plugins/Preg/Synopsis/#using-match'>documentation</a>)."
+          HELP: "Match any text and assign it to a tag"
+          DESCRIPTION: "See the <a href='http://s9etextformatter.readthedocs.org/Plugins/Preg/Synopsis/#using-match' title='TextFormatter documentation'>documentation</a> for more information."
           PLACEHOLDER_KEY: "<pattern>"
           PLACEHOLDER_VALUE: "<tagname>"

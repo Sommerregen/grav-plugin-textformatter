@@ -710,7 +710,7 @@ function outputTag(tag)
 		attributeNames.forEach(
 			function(attrName)
 			{
-				output += ' ' + attrName + '="' + htmlspecialchars_compat(attributes[attrName].toString()) + '"';
+				output += ' ' + attrName + '="' + htmlspecialchars_compat(attributes[attrName].toString()).replace(/\n/g, '&#10;') + '"';
 			}
 		);
 
@@ -1256,6 +1256,31 @@ function closeParent(tag)
 }
 
 /**
+* Apply the createChild rules associated with given tag
+*
+* @param {!Tag} tag Tag
+*/
+function createChild(tag)
+{
+	if (!HINT.createChild)
+	{
+		return;
+	}
+
+	var tagConfig = tagsConfig[tag.getName()];
+	if (tagConfig.rules.createChild)
+	{
+		var priority = -1000,
+			_text    = text.substr(pos),
+			tagPos   = pos + _text.length - _text.replace(/^[ \n\r\t]+/, '').length;
+		tagConfig.rules.createChild.forEach(function(tagName)
+		{
+			addStartTag(tagName, tagPos, 0).setSortPriority(++priority);
+		});
+	}
+}
+
+/**
 * Apply fosterParent rules associated with given tag
 *
 * NOTE: this rule has the potential for creating an unbounded loop, either if a tag tries to
@@ -1289,19 +1314,23 @@ function fosterParent(tag)
 			{
 				if (parentName !== tagName && currentFixingCost < maxFixingCost)
 				{
-					// Add a 0-width copy of the parent tag right after this tag, and make it
-					// depend on this tag
+					// Add a 0-width copy of the parent tag right after this tag, with a worse
+					// priority and make it depend on this tag
 					var child = addCopyTag(parent, tag.getPos() + tag.getLen(), 0);
 					tag.cascadeInvalidationTo(child);
+					child.setSortPriority(tag.getSortPriority() + 1);
 				}
-
-				++currentFixingCost;
 
 				// Reinsert current tag
 				tagStack.push(tag);
 
-				// And finally close its parent
-				addMagicEndTag(parent, tag.getPos());
+				// And finally close its parent with a priority that ensures it is processed
+				// before this tag
+				addMagicEndTag(parent, tag.getPos()).setSortPriority(tag.getSortPriority() - 1);
+
+				// Adjust the fixing cost commensurately with the size of the tag stack which
+				// has to be sorted
+				currentFixingCost += tagStack.length;
 
 				return true;
 			}
@@ -1359,6 +1388,7 @@ function requireAncestor(tag)
 *
 * @param  {!Tag}    startTag Start tag
 * @param  {!number} tagPos   End tag's position (will be adjusted for whitespace if applicable)
+* @return {!Tag}
 */
 function addMagicEndTag(startTag, tagPos)
 {
@@ -1371,7 +1401,10 @@ function addMagicEndTag(startTag, tagPos)
 	}
 
 	// Add a 0-width end tag that is paired with the given start tag
-	addEndTag(tagName, tagPos, 0).pairWith(startTag);
+	var endTag = addEndTag(tagName, tagPos, 0);
+	endTag.pairWith(startTag);
+
+	return endTag;
 }
 
 /**
@@ -1654,6 +1687,9 @@ function processStartTag(tag)
 	// This tag is valid, output it and update the context
 	outputTag(tag);
 	pushContext(tag);
+
+	// Apply the createChild rules if applicable
+	createChild(tag);
 }
 
 /**
@@ -1951,7 +1987,7 @@ function addBrTag(pos)
 */
 function addIgnoreTag(pos, len)
 {
-	return addTag(Tag.SELF_CLOSING_TAG, 'i', pos, len);
+	return addTag(Tag.SELF_CLOSING_TAG, 'i', pos, Math.min(len, textLen - pos));
 }
 
 /**

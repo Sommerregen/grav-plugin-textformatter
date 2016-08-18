@@ -2,7 +2,7 @@
 
 /*
 * @package   s9e\TextFormatter
-* @copyright Copyright (c) 2010-2015 The s9e Authors
+* @copyright Copyright (c) 2010-2016 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\TextFormatter\Plugins\BBCodes\Configurator;
@@ -143,7 +143,7 @@ class BBCodeMonkey
 		{
 			$pos   = \strpos($definition, '=');
 			$name  = \substr($definition, 0, $pos);
-			$value = \substr($definition, 1 + $pos);
+			$value = \preg_replace('(^"(.*?)")s', '$1', \substr($definition, 1 + $pos));
 			$value = \preg_replace_callback(
 				'#(\\{(?>HASHMAP|MAP|PARSE|REGEXP)=)([A-Za-z0-9+/]+=*)#',
 				function ($m)
