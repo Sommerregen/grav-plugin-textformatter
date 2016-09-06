@@ -2,7 +2,7 @@
 ## 09/06/2016
 
 2. [](#improved)
-  * Unload unused `TextFormatter` vendor plugins for disabled options; may address (#3)[https://github.com/Sommerregen/grav-plugin-textformatter/issues/3] (Update breaks Shortcode plugin!) and [#4](https://github.com/Sommerregen/grav-plugin-textformatter/issues/4) (Crashes site after latest update).
+  * Unload unused `TextFormatter` vendor plugins for disabled options; may address [#3](https://github.com/Sommerregen/grav-plugin-textformatter/issues/3) (Update breaks Shortcode plugin!) and [#4](https://github.com/Sommerregen/grav-plugin-textformatter/issues/4) (Crashes site after latest update)
 
 # v1.1.0
 ## 08/18/2016
