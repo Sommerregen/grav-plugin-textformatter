@@ -169,22 +169,30 @@ class TextFormatter
      */
     protected function setupBbcodes($options)
     {
-        if ($options['enabled']) {
-            // Add BBCodes using bundled repository
-            foreach ((array) $options['bbcodes'] as $key => $bbcode) {
-                $bbcode = strtoupper($bbcode);
-                // Unset duplicate tags, see https://github.com/s9e/TextFormatter/issues/11
-                if (in_array($bbcode, ['EMAIL', 'URL', 'IMG'])) {
-                    unset($this->textformatter->tags[$bbcode]);
-                }
+        // Reset BBCodes
+        foreach ($this->textformatter->tags as $bbcode => $value) {
+            unset($this->textformatter->tags[$bbcode]);
+        }
 
-                $this->textformatter->BBCodes->addFromRepository($bbcode);
-            }
+        if (!$options['enabled']) {
+            unset($this->textformatter->BBCodes);
+            return;
+        }
 
-            // Add BBCode using the custom syntax
-            foreach ((array) $options['custom'] as $bbcode => $template) {
-                $this->textformatter->BBCodes->addCustom($bbcode, $template);
+        // Add BBCodes using bundled repository
+        foreach ((array) $options['bbcodes'] as $key => $bbcode) {
+            $bbcode = strtoupper($bbcode);
+
+            // Unset duplicate tags, see https://github.com/s9e/TextFormatter/issues/11
+            if (in_array($bbcode, ['EMAIL', 'URL', 'IMG'])) {
+                unset($this->textformatter->tags[$bbcode]);
             }
+            $this->textformatter->BBCodes->addFromRepository($bbcode);
+        }
+
+        // Add BBCode using the custom syntax
+        foreach ((array) $options['custom'] as $bbcode => $template) {
+            $this->textformatter->BBCodes->addCustom($bbcode, $template);
         }
     }
 
@@ -196,11 +204,14 @@ class TextFormatter
      */
     protected function setupCensor($options)
     {
-        if ($options['enabled']) {
-            foreach ((array) $options['words'] as $word => $replacement) {
-                $replacement = $replacement ?: null;
-                $this->textformatter->Censor->add($word, $replacement);
-            }
+        if (!$options['enabled']) {
+            unset($this->textformatter->Censor);
+            return;
+        }
+
+        foreach ((array) $options['words'] as $word => $replacement) {
+            $replacement = $replacement ?: null;
+            $this->textformatter->Censor->add($word, $replacement);
         }
     }
 
@@ -223,6 +234,7 @@ class TextFormatter
                 break;
 
             default:
+                unset($this->textformatter->Emoji);
                 break;
         }
     }
@@ -236,14 +248,17 @@ class TextFormatter
      */
     protected function setupEmoticons($options)
     {
-        if ($options['enabled']) {
-            foreach ((array) $options['icons'] as $code => $filename)
-            {
-                $this->textformatter->Emoticons->add($code,
-                    '<img src="{$EMOTICONS_PATH}/' . $filename .
-                    '" alt="' . $code . '"/>'
-                );
-            }
+        if (!$options['enabled']) {
+            unset($this->textformatter->Emoticons);
+            return;
+        }
+
+        foreach ((array) $options['icons'] as $code => $filename)
+        {
+            $this->textformatter->Emoticons->add($code,
+                '<img src="{$EMOTICONS_PATH}/' . $filename .
+                '" alt="' . $code . '"/>'
+            );
         }
     }
 
@@ -312,32 +327,34 @@ class TextFormatter
         }
 
         // HTMLElements
-        if ($options['elements']['enabled']) {
-            $elements = $options['elements']['allowed'];
+        if (!$options['elements']['enabled']) {
+            unset($this->textformatter->HTMLElements);
+            return;
+        }
 
-            // Register safe HTML elements and attributes
-            foreach ((array) $elements['safe'] as $element => $item) {
-                $this->textformatter->HTMLElements->allowElement($element);
+        // Register safe HTML elements and attributes
+        $elements = $options['elements']['allowed'];
+        foreach ((array) $elements['safe'] as $element => $item) {
+            $this->textformatter->HTMLElements->allowElement($element);
 
-                $attributes = array_filter(explode(', ', $item));
-                foreach ($attributes as $index => $attribute) {
-                    $attr = $this->textformatter->HTMLElements->allowAttribute($element, trim($attribute, '* '));
-                    if ($attribute[0] !== '*') {
-                        $attr->required = true;
-                    }
+            $attributes = array_filter(explode(', ', $item));
+            foreach ($attributes as $index => $attribute) {
+                $attr = $this->textformatter->HTMLElements->allowAttribute($element, trim($attribute, '* '));
+                if ($attribute[0] !== '*') {
+                    $attr->required = true;
                 }
             }
+        }
 
-            // Register unsafe HTML elements and attributes
-            foreach ((array) $elements['unsafe'] as $element => $item) {
-                $this->textformatter->HTMLElements->allowUnsafeElement($element);
+        // Register unsafe HTML elements and attributes
+        foreach ((array) $elements['unsafe'] as $element => $item) {
+            $this->textformatter->HTMLElements->allowUnsafeElement($element);
 
-                $attributes = array_filter(explode(', ', $item));
-                foreach ($attributes as $index => $attribute) {
-                    $attr = $this->textformatter->HTMLElements->allowUnsafeAttribute($element, trim($attribute, '* '));
-                    if ($attribute[0] !== '*') {
-                        $attr->required = true;
-                    }
+            $attributes = array_filter(explode(', ', $item));
+            foreach ($attributes as $index => $attribute) {
+                $attr = $this->textformatter->HTMLElements->allowUnsafeAttribute($element, trim($attribute, '* '));
+                if ($attribute[0] !== '*') {
+                    $attr->required = true;
                 }
             }
         }
@@ -352,22 +369,25 @@ class TextFormatter
      */
     protected function setupKeywords($options)
     {
-        if ($options['enabled']) {
-            // Keywords are case-sensitive by default but you can make
-            // case-insensitive. This is not recommended if the list of
-            // keywords contain words that could appear in normal speech, e.g.
-            // "Fire", "Air", "The"
-            $this->textformatter->Keywords->caseSensitive = (bool) $options['case_sensitive'];
+        if (!$options['enabled']) {
+            unset($this->textformatter->Keywords);
+            return;
+        }
 
-            if (strlen($options['template']) > 0) {
-                // Set the template that renders them
-                $this->textformatter->Keywords->getTag()->template = $options['template'];
-            }
+        // Keywords are case-sensitive by default but you can make
+        // case-insensitive. This is not recommended if the list of
+        // keywords contain words that could appear in normal speech, e.g.
+        // "Fire", "Air", "The"
+        $this->textformatter->Keywords->caseSensitive = (bool) $options['case_sensitive'];
 
-            // Add a couple of keywords
-            foreach ((array) $options['keywords'] as $index => $word) {
-                $this->textformatter->Keywords->add($word);
-            }
+        if (strlen($options['template']) > 0) {
+            // Set the template that renders them
+            $this->textformatter->Keywords->getTag()->template = $options['template'];
+        }
+
+        // Add a couple of keywords
+        foreach ((array) $options['keywords'] as $index => $word) {
+            $this->textformatter->Keywords->add($word);
         }
     }
 
@@ -381,17 +401,20 @@ class TextFormatter
      */
     protected function setupMediaembed($options)
     {
-        if ($options['enabled']) {
-            if ($options['create_individiual_bbcodes']) {
-                // We want to create individual BBCodes such as [youtube] in
-                // addition to the default [media] BBCode
-                $this->textformatter->MediaEmbed->createIndividualBBCodes = true;
-            }
+        if (!$options['enabled']) {
+            unset($this->textformatter->MediaEmbed);
+            return;
+        }
 
-            // Add the sites we want to support
-            foreach ((array) $options['sites'] as $key => $service) {
-                $this->textformatter->MediaEmbed->add($service);
-            }
+        if ($options['create_individiual_bbcodes']) {
+            // We want to create individual BBCodes such as [youtube] in
+            // addition to the default [media] BBCode
+            $this->textformatter->MediaEmbed->createIndividualBBCodes = true;
+        }
+
+        // Add the sites we want to support
+        foreach ((array) $options['sites'] as $key => $service) {
+            $this->textformatter->MediaEmbed->add($service);
         }
     }
 
@@ -403,14 +426,17 @@ class TextFormatter
      */
     protected function setupPreg($options)
     {
-        if ($options['enabled']) {
-            foreach ((array) $options['replace'] as $pattern => $replacement) {
-                $this->textformatter->Preg->replace($pattern, $replacement);
-            }
+        if (!$options['enabled']) {
+            unset($this->textformatter->Preg);
+            return;
+        }
 
-            foreach ((array) $options['match'] as $pattern => $tag) {
-                $this->textformatter->Preg->match($pattern, $tag);
-            }
+        foreach ((array) $options['replace'] as $pattern => $replacement) {
+            $this->textformatter->Preg->replace($pattern, $replacement);
+        }
+
+        foreach ((array) $options['match'] as $pattern => $tag) {
+            $this->textformatter->Preg->match($pattern, $tag);
         }
     }
 }
